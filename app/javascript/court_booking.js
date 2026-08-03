@@ -123,13 +123,24 @@ function updateAvailableSlots(courtId, selectedDate) {
   ALL_SLOTS.forEach(slot => {
     const isBooked = courtBookings.some(b => slot.start < b.end_hour && slot.end > b.start_hour);
     
+    // Need to use the local date string instead of toISOString because toISOString is UTC
+    const localToday = new Date();
+    const tzoffset = localToday.getTimezoneOffset() * 60000;
+    const localISOToday = (new Date(localToday - tzoffset)).toISOString().split('T')[0];
+    
+    const isPastHour = (selectedDate === localISOToday) && (slot.start <= localToday.getHours());
+    
     const pill = document.createElement("button");
     pill.type = "button";
     
-    if (isBooked) {
+    if (isBooked || isPastHour) {
       pill.className = "slot-pill booked";
       pill.disabled = true;
-      pill.textContent = `${slot.label} (Booked)`;
+      if (isPastHour && !isBooked) {
+        pill.textContent = `${slot.label} (Passed)`;
+      } else {
+        pill.textContent = `${slot.label} (Booked)`;
+      }
     } else {
       pill.className = "slot-pill";
       if (selectedSlots[courtId] === slot.label) {

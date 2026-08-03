@@ -1,6 +1,15 @@
 class BookingsController < ApplicationController
   protect_from_forgery with: :null_session, if: -> { request.format.json? }
 
+  def index
+    if current_user.nil?
+      redirect_to root_path, alert: "กรุณาเข้าสู่ระบบก่อน"
+      return
+    end
+    
+    @bookings = current_user.bookings.order(start_time: :desc)
+  end
+
   def create
     user = current_user
     
@@ -21,6 +30,10 @@ class BookingsController < ApplicationController
     end
 
     start_time = Time.zone.local(date.year, date.month, date.day, params[:start_hour].to_i, 0, 0)
+    if start_time <= Time.current
+      return render json: { status: "error", errors: ["ไม่สามารถจองช่วงเวลาที่ผ่านไปแล้วได้"] }, status: :unprocessable_entity
+    end
+
     end_time = start_time + 1.hour
     phone = params[:phone]
 
@@ -59,5 +72,44 @@ class BookingsController < ApplicationController
         }, status: :unprocessable_entity
       end
     end
+  end
+
+  def destroy
+    if current_user.nil?
+      redirect_to root_path, alert: "กรุณาเข้าสู่ระบบก่อน"
+      return
+    end
+
+    booking = current_user.bookings.find_by(id: params[:id])
+    if booking.nil?
+      redirect_to bookings_path, alert: "ไม่พบการจองนี้"
+      return
+    end
+
+    if Cancle.exists?(booking_id: booking.id)
+      redirect_to bookings_path, alert: "การจองนี้ถูกยกเลิกไปแล้ว"
+      return
+    end
+
+    if Time.current >= booking.start_time
+      redirect_to bookings_path, alert: "ไม่สามารถยกเลิกการจองที่เลยเวลาเริ่มไปแล้วได้"
+      return
+    end
+
+    # Calculate refund
+    # If cancelled before 60 minutes prior to start_time -> 100% refund (500)
+    # If cancelled within 60 minutes of start_time -> 50% refund (250)
+    time_diff = booking.start_time - Time.current
+    refund_amount = (time_diff > 60.minutes) ? 500 : 250
+
+    Booking.transaction do
+      # 1. Create Cancle record
+      Cancle.create!(booking_id: booking.id)
+      
+      # 2. Refund credits
+      current_user.topups.create!(amount: refund_amount, status: 'approved')
+    end
+
+    redirect_to bookings_path, notice: "ยกเลิกการจองเรียบร้อยแล้ว คุณได้รับเงินคืน #{refund_amount} เครดิต"
   end
 end
