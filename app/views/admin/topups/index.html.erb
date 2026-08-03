@@ -1,51 +1,101 @@
-<h2>รายการแจ้งเติมเงินทั้งหมด (Admin)</h2>
+<script src="https://cdn.tailwindcss.com"></script>
 
-<% if notice.present? %>
-  <p style="color: green;"><%= notice %></p>
-<% end %>
-<% if alert.present? %>
-  <p style="color: red;"><%= alert %></p>
-<% end %>
+<div class="min-h-screen bg-slate-50 px-4 md:px-10 py-10">
+  <div class="max-w-5xl mx-auto">
 
-<table border="1" cellpadding="10" cellspacing="0" style="width: 100%; text-align: left;">
-  <thead>
-    <tr>
-      <th>ผู้ใช้ (User)</th>
-      <th>จำนวนเงิน (บาท)</th>
-      <th>สถานะ</th>
-      <th>เวลา</th>
-      <th>การจัดการ</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @topups.each do |topup| %>
-      <tr>
-        <td><%= topup.user.first_name %> <%= topup.user.last_name %></td>
-        <td><%= topup.amount %></td>
-        <td>
-          <% if topup.status == 'approved' %>
-            <span style="color: green;">อนุมัติแล้ว</span>
-          <% elsif topup.status == 'rejected' %>
-            <span style="color: red;">ปฏิเสธ</span>
-          <% else %>
-            <span style="color: orange;">รออนุมัติ</span>
-          <% end %>
-        </td>
-        <td><%= topup.created_at.localtime.to_fs(:short) %></td>
-        <td>
-          <% if topup.status == 'pending' %>
-            <div style="display: flex; gap: 10px;">
-              <%= button_to "อนุมัติ", admin_topup_path(topup, status: 'approved'), method: :patch, data: { turbo: false } %>
-              <%= button_to "ปฏิเสธ", admin_topup_path(topup, status: 'rejected'), method: :patch, data: { turbo: false } %>
-            </div>
-          <% else %>
-            -
-          <% end %>
-        </td>
-      </tr>
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-extrabold text-blue-950 tracking-tight">รายการแจ้งเติมเงินทั้งหมด</h1>
+        <p class="text-sm text-slate-500 mt-1">Admin · Top-up Requests</p>
+      </div>
+      <%= link_to "← กลับหน้าแรก", root_path,
+            class: "rounded-xl bg-white border border-slate-200 text-blue-950 font-medium text-sm px-4 py-2.5 hover:bg-slate-100 transition-colors shadow-sm" %>
+    </div>
+
+    <!-- Notice -->
+    <% if notice.present? %>
+      <div class="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 shadow-sm">
+        <%= notice %>
+      </div>
     <% end %>
-  </tbody>
-</table>
 
-<br>
-<%= link_to "กลับหน้าแรก", root_path %>
+    <!-- Alert -->
+    <% if alert.present? %>
+      <div class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 shadow-sm">
+        <%= alert %>
+      </div>
+    <% end %>
+
+    <!-- Table Card -->
+    <div class="rounded-2xl bg-white border border-slate-100 shadow-xl shadow-blue-950/5 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead>
+            <tr class="bg-blue-950">
+              <th class="px-5 py-3.5 font-semibold text-blue-200 uppercase tracking-wide text-xs">ผู้ใช้ (User)</th>
+              <th class="px-5 py-3.5 font-semibold text-blue-200 uppercase tracking-wide text-xs">จำนวนเงิน (บาท)</th>
+              <th class="px-5 py-3.5 font-semibold text-blue-200 uppercase tracking-wide text-xs">สถานะ</th>
+              <th class="px-5 py-3.5 font-semibold text-blue-200 uppercase tracking-wide text-xs">เวลา</th>
+              <th class="px-5 py-3.5 font-semibold text-blue-200 uppercase tracking-wide text-xs">การจัดการ</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <% @topups.each do |topup| %>
+              <tr class="hover:bg-slate-50 transition-colors">
+                <td class="px-5 py-4 font-medium text-blue-950">
+                  <%= topup.user.first_name %> <%= topup.user.last_name %>
+                </td>
+                <td class="px-5 py-4 font-semibold text-blue-950">
+                  <%= number_with_delimiter(topup.amount) %>
+                </td>
+                <td class="px-5 py-4">
+                  <% if topup.status == 'approved' %>
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold px-3 py-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> อนุมัติแล้ว
+                    </span>
+                  <% elsif topup.status == 'rejected' %>
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-red-50 text-red-700 text-xs font-semibold px-3 py-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> ปฏิเสธ
+                    </span>
+                  <% else %>
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 text-amber-700 text-xs font-semibold px-3 py-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> รออนุมัติ
+                    </span>
+                  <% end %>
+                </td>
+                <td class="px-5 py-4 text-slate-500">
+                  <%= topup.created_at.localtime.to_fs(:short) %>
+                </td>
+                <td class="px-5 py-4">
+                  <% if topup.status == 'pending' %>
+                    <div class="flex gap-2">
+                      <%= button_to "อนุมัติ", admin_topup_path(topup, status: 'approved'), method: :patch,
+                            class: "rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold px-3.5 py-2 transition-colors",
+                            data: { turbo: false } %>
+                      <%= button_to "ปฏิเสธ", admin_topup_path(topup, status: 'rejected'), method: :patch,
+                            class: "rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs font-semibold px-3.5 py-2 transition-colors",
+                            data: { turbo: false } %>
+                    </div>
+                  <% else %>
+                    <span class="text-slate-300">—</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+
+            <% if @topups.empty? %>
+              <tr>
+                <td colspan="5" class="px-5 py-10 text-center text-slate-400">
+                  ยังไม่มีรายการแจ้งเติมเงิน
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p class="text-center text-xs text-slate-400 mt-6">Powered by ODT</p>
+  </div>
+</div>

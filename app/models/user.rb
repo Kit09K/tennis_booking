@@ -6,4 +6,8 @@ class User < ApplicationRecord
   end
   has_many :bookings, dependent: :destroy
   has_one :booking, -> { where.missing(:cancle).order(created_at: :desc) }, class_name: "Booking"
+
+  def name
+    [first_name, last_name].compact.join(' ')
+  end
 end
