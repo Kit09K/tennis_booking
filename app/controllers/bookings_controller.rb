@@ -62,7 +62,7 @@ class BookingsController < ApplicationController
             cord_id: @booking.cord_id,
             date: @booking.start_time.strftime("%Y-%m-%d"),
             start_hour: @booking.start_time.hour,
-            end_hour: @booking.end_time.hour
+            end_hour: @booking.end_time.hour == 0 ? 24 : @booking.end_time.hour
           }
         }, status: :created
       else

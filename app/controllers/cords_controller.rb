@@ -10,7 +10,7 @@ class CordsController < ApplicationController
         end_time: b.end_time.iso8601,
         date: b.start_time.strftime("%Y-%m-%d"),
         start_hour: b.start_time.hour,
-        end_hour: b.end_time.hour
+        end_hour: b.end_time.hour == 0 ? 24 : b.end_time.hour
       }
     end
     @adjustcords = Adjustcord.all.map do |a|
