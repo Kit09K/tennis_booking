@@ -1,0 +1,51 @@
+<h2>รายการแจ้งเติมเงินทั้งหมด (Admin)</h2>
+
+<% if notice.present? %>
+  <p style="color: green;"><%= notice %></p>
+<% end %>
+<% if alert.present? %>
+  <p style="color: red;"><%= alert %></p>
+<% end %>
+
+<table border="1" cellpadding="10" cellspacing="0" style="width: 100%; text-align: left;">
+  <thead>
+    <tr>
+      <th>ผู้ใช้ (User)</th>
+      <th>จำนวนเงิน (บาท)</th>
+      <th>สถานะ</th>
+      <th>เวลา</th>
+      <th>การจัดการ</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @topups.each do |topup| %>
+      <tr>
+        <td><%= topup.user.first_name %> <%= topup.user.last_name %></td>
+        <td><%= topup.amount %></td>
+        <td>
+          <% if topup.status == 'approved' %>
+            <span style="color: green;">อนุมัติแล้ว</span>
+          <% elsif topup.status == 'rejected' %>
+            <span style="color: red;">ปฏิเสธ</span>
+          <% else %>
+            <span style="color: orange;">รออนุมัติ</span>
+          <% end %>
+        </td>
+        <td><%= topup.created_at.localtime.to_fs(:short) %></td>
+        <td>
+          <% if topup.status == 'pending' %>
+            <div style="display: flex; gap: 10px;">
+              <%= button_to "อนุมัติ", admin_topup_path(topup, status: 'approved'), method: :patch, data: { turbo: false } %>
+              <%= button_to "ปฏิเสธ", admin_topup_path(topup, status: 'rejected'), method: :patch, data: { turbo: false } %>
+            </div>
+          <% else %>
+            -
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+<%= link_to "กลับหน้าแรก", root_path %>

@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  namespace :admin do
+    resources :topups, only: [:index, :update]
+  end
+  resources :topups, only: [:new, :create]
   get "cords/Cords"
   get "cords/index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
@@ -20,4 +24,7 @@ Rails.application.routes.draw do
   post '/auth/:provider/callback', to: 'sessions#create'
   
   get '/auth/failure', to: 'sessions#failure'
+  
+  delete '/logout', to: 'sessions#destroy', as: :logout
+  get '/logout', to: 'sessions#destroy'
 end

@@ -1,4 +1,106 @@
-<h1>ระบบจองสนามเทนนิส</h1>
-<p>กรุณาเข้าสู่ระบบเพื่อใช้งาน</p>
+<script src="https://cdn.tailwindcss.com"></script>
 
-<%= button_to "Login with Keycloak", "/auth/keycloak", method: :post, data: { turbo: false } %>
+<div class="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-16">
+  <div class="w-full max-w-md">
+
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-yellow-500 shadow-lg shadow-amber-500/30 mb-4 text-3xl">
+        🎾
+      </div>
+      <h1 class="text-3xl font-extrabold text-blue-950 tracking-tight">ระบบจองสนามเทนนิส</h1>
+      <p class="text-sm text-slate-500 mt-1">Tennis Court Booking System</p>
+    </div>
+
+    <!-- Notice -->
+    <% if notice.present? %>
+      <div class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 flex items-center gap-2 shadow-sm">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <%= notice %>
+      </div>
+    <% end %>
+
+    <!-- Alert -->
+    <% if alert.present? %>
+      <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 flex items-center gap-2 shadow-sm">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <%= alert %>
+      </div>
+    <% end %>
+
+    <!-- Main Card -->
+    <div class="rounded-2xl bg-white border border-slate-100 shadow-xl shadow-blue-950/5 p-6">
+
+      <% if session[:userinfo].present? %>
+
+        <% current_user = User.find_by(id: session[:user_id]) %>
+
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-11 h-11 rounded-full bg-blue-950 text-amber-400 font-bold flex items-center justify-center text-lg">
+            <%= session[:userinfo]["name"].to_s.first %>
+          </div>
+          <p class="text-lg font-semibold text-blue-950">
+            ยินดีต้อนรับคุณ <%= session[:userinfo]["name"] %>!
+          </p>
+        </div>
+
+        <h3 class="text-xs font-bold uppercase tracking-widest text-amber-500 mb-3">ข้อมูลโปรไฟล์ (Profile)</h3>
+
+        <ul class="space-y-2 mb-4">
+          <li class="flex justify-between items-center rounded-lg bg-slate-50 border border-slate-100 px-4 py-2.5 text-sm">
+            <span class="text-slate-500">ชื่อ</span>
+            <span class="font-medium text-blue-950"><%= session[:userinfo]["name"] %></span>
+          </li>
+          <li class="flex justify-between items-center rounded-lg bg-slate-50 border border-slate-100 px-4 py-2.5 text-sm">
+            <span class="text-slate-500">อีเมล</span>
+            <span class="font-medium text-blue-950"><%= session[:userinfo]["email"] %></span>
+          </li>
+        </ul>
+
+        <!-- Balance Card -->
+        <div class="rounded-xl bg-gradient-to-br from-blue-950 to-blue-900 px-5 py-4 mb-6 flex items-center justify-between shadow-md">
+          <div>
+            <p class="text-xs text-blue-200 uppercase tracking-wide font-semibold mb-1">เครดิตคงเหลือ</p>
+            <p class="text-2xl font-extrabold text-amber-400">
+              <%= number_with_delimiter(current_user&.balance || 0) %> <span class="text-sm font-medium text-white">บาท</span>
+            </p>
+          </div>
+          <div class="w-10 h-10 rounded-full bg-amber-400/20 flex items-center justify-center text-xl">
+            💰
+          </div>
+        </div>
+
+        <%= button_to "ไปหน้าเติมเงิน", new_topup_path, method: :get, data: { turbo: false },
+              class: "w-full rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-blue-950 font-bold py-2.5 shadow-md shadow-amber-500/25 transition-all mb-3" %>
+
+        <% if session[:is_admin] %>
+          <div class="mt-4 pt-4 border-t border-slate-100">
+            <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 10-8 0v2"/></svg>
+              ส่วนสำหรับผู้ดูแลระบบ
+            </h3>
+            <%= button_to "จัดการการเติมเงิน (Admin)", admin_topups_path, method: :get, data: { turbo: false },
+                  class: "w-full rounded-xl bg-white border-2 border-blue-950 text-blue-950 font-semibold py-2.5 hover:bg-blue-950 hover:text-white transition-colors" %>
+          </div>
+        <% end %>
+
+        <div class="mt-4 pt-4 border-t border-slate-100">
+          <%= button_to "Logout", logout_path, method: :delete, data: { turbo: false },
+                class: "w-full rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium py-2.5 transition-colors" %>
+        </div>
+
+      <% else %>
+
+        <div class="text-center py-4">
+          <p class="text-slate-600 mb-6">กรุณาเข้าสู่ระบบเพื่อใช้งาน</p>
+          <%= button_to "Login with Keycloak", "/auth/keycloak", method: :post, data: { turbo: false },
+                class: "w-full rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-blue-950 font-bold py-3 shadow-lg shadow-amber-500/30 transition-all" %>
+        </div>
+
+      <% end %>
+
+    </div>
+
+    <p class="text-center text-xs text-slate-400 mt-6">Powered by ODT</p>
+  </div>
+</div>
