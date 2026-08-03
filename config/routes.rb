@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   namespace :admin do
     resources :topups, only: [:index, :update]
+    resources :adjustcords, only: [:create, :destroy]
   end
   resources :topups, only: [:new, :create]
   get "cords/Cords"

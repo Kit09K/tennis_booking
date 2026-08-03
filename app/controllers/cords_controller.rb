@@ -1,7 +1,8 @@
 class CordsController < ApplicationController
   def index
     @cords = Cord.all
-    @bookings = Booking.all.map do |b|
+    active_bookings = Booking.where.not(id: Cancle.select(:booking_id))
+    @bookings = active_bookings.map do |b|
       {
         id: b.id,
         cord_id: b.cord_id,
@@ -10,6 +11,13 @@ class CordsController < ApplicationController
         date: b.start_time.strftime("%Y-%m-%d"),
         start_hour: b.start_time.hour,
         end_hour: b.end_time.hour
+      }
+    end
+    @adjustcords = Adjustcord.all.map do |a|
+      {
+        id: a.id,
+        start_date: a.start_date.to_date.to_s,
+        end_date: a.end_date.to_date.to_s
       }
     end
   end

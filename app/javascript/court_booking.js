@@ -20,6 +20,7 @@ const ALL_SLOTS = [
 ];
 
 let existingBookings = [];
+let closedDates = [];
 const selectedSlots = {};
 
 function initCourtBooking() {
@@ -28,17 +29,22 @@ function initCourtBooking() {
 
   try {
     existingBookings = JSON.parse(pageWrapper.dataset.bookings || "[]");
+    closedDates = JSON.parse(pageWrapper.dataset.closedDates || "[]");
   } catch (e) {
     existingBookings = [];
+    closedDates = [];
   }
 
   // Bind date pickers
   document.querySelectorAll(".court-date-picker").forEach(input => {
     const courtId = input.dataset.courtId;
-    updateAvailableSlots(courtId);
+    
+    // Initial check on load
+    checkAndApplyDate(input, courtId);
 
-    input.addEventListener("change", () => {
-      updateAvailableSlots(courtId);
+    // Check on change
+    input.addEventListener("change", (e) => {
+      checkAndApplyDate(e.target, courtId);
     });
   });
 
@@ -52,12 +58,44 @@ function initCourtBooking() {
   });
 }
 
-function updateAvailableSlots(courtId) {
-  const dateInput = document.getElementById(`date-${courtId}`);
-  const container = document.getElementById(`slots-${courtId}`);
-  if (!dateInput || !container) return;
+function checkAndApplyDate(input, courtId) {
+  const selectedDateStr = input.value;
+  const btn = document.querySelector(`button[data-testid='booking-btn'][data-court-id='${courtId}']`);
 
-  const selectedDate = dateInput.value;
+  if (!selectedDateStr) return;
+  
+  const selectedDate = new Date(selectedDateStr);
+  selectedDate.setHours(0,0,0,0);
+  
+  const isClosed = closedDates.some(range => {
+    const start = new Date(range.start_date);
+    start.setHours(0,0,0,0);
+    const end = new Date(range.end_date);
+    end.setHours(0,0,0,0);
+    return selectedDate >= start && selectedDate <= end;
+  });
+
+  if (isClosed) {
+    input.value = "";
+    document.getElementById(`slots-${courtId}`).innerHTML = "<p style='color: red; font-weight: bold;'>ไม่สามารถจองได้ เนื่องจากตรงกับช่วงเวลาที่สนามปิดปรับปรุง</p>";
+    if (btn) {
+      btn.disabled = true;
+      btn.classList.add("cursor-not-allowed", "opacity-50");
+    }
+    return;
+  }
+  
+  if (btn) {
+    btn.disabled = false;
+    btn.classList.remove("cursor-not-allowed", "opacity-50");
+  }
+  updateAvailableSlots(courtId, input.value);
+}
+
+function updateAvailableSlots(courtId, selectedDate) {
+  const container = document.getElementById(`slots-${courtId}`);
+  if (!container || !selectedDate) return;
+
   const courtBookings = existingBookings.filter(b => b.cord_id == courtId && b.date === selectedDate);
 
   container.innerHTML = "";
@@ -95,15 +133,21 @@ async function handleBookingClick(courtId, courtName) {
   const selectedDate = dateInput ? dateInput.value : "";
 
   if (!selectedSlot) {
-    alert("Please select a time slot before booking.");
+    alert("กรุณาเลือกเวลาที่ต้องการจอง");
     return;
   }
 
-  const confirmMsg = `Confirm booking for ${courtName}\nDate: ${selectedDate}\nTime: ${selectedSlot}\nPrice: 500 THB\n\nPlease transfer payment to the following account: KBank, Account Number: 123-4-56789-0 (Account Name: Tennis Club)`;
+  const confirmMsg = `ยืนยันการจองสนาม ${courtName}\nวันที่: ${selectedDate}\nเวลา: ${selectedSlot}\nราคา: 500 บาท`;
   if (confirm(confirmMsg)) {
     const [startStr] = selectedSlot.split("-");
     const startHour = parseInt(startStr);
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+    const phone = prompt("กรุณากรอกเบอร์โทรศัพท์ของคุณเพื่อยืนยันการจอง:");
+    if (!phone) {
+      alert("จำเป็นต้องกรอกเบอร์โทรศัพท์เพื่อทำการจอง");
+      return;
+    }
 
     try {
       const response = await fetch("/bookings", {
@@ -117,23 +161,22 @@ async function handleBookingClick(courtId, courtName) {
           date: selectedDate,
           start_hour: startHour,
           account_number: "1234567890",
-          name_account: "Customer"
+          name_account: "Customer",
+          phone: phone
         })
       });
 
       const data = await response.json();
 
       if (response.ok && data.status === "success") {
-        alert("Booking information saved successfully!");
-        existingBookings.push(data.booking);
-        delete selectedSlots[courtId];
-        updateAvailableSlots(courtId);
+        alert("จองสำเร็จ ระบบได้ทำการหักเครดิต 500 บาทเรียบร้อยแล้ว");
+        window.location.reload();
       } else {
-        alert("An error occurred while saving the booking: " + (data.errors ? data.errors.join(", ") : "Please try again"));
+        alert("เกิดข้อผิดพลาด: " + (data.errors ? data.errors.join(", ") : "กรุณาลองใหม่อีกครั้ง"));
       }
     } catch (err) {
       console.error(err);
-      alert("An unexpected error occurred. Please try again.");
+      alert("เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองใหม่อีกครั้ง");
     }
   }
 }

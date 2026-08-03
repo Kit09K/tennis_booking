@@ -1,6 +1,6 @@
 class Cord < ApplicationRecord
-  has_many :booking, dependent: :destroy
-  has_many :adjustcord, dependent: :destroy
+  has_many :bookings, dependent: :destroy
+  has_many :adjustcords, dependent: :destroy
 
   def temporarily_closed?
     
