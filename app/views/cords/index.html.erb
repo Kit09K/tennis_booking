@@ -1,0 +1,23 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <h1>Tennis Courts</h1>
+    <p>Hello, <strong><%= current_user&.name || "Guest" %></strong>!</p>
+  </div>
+
+  <div class="court-card">
+    <div class="court-image" aria-label="Tennis court image">
+      <span class="court-image-content">
+        <img src="Tennis_Court.jpg" alt="Tennis Court 1">
+      </span>
+    </div>
+
+    <div class="court-details">
+      <div>
+        <h2>Court 1</h2>
+        <p>Indoor • Hard surface</p>
+      </div>
+
+      <%= link_to "Book Now", "#", class: "booking-btn" %>
+    </div>
+  </div>
+</div>

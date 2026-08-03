@@ -8,3 +8,97 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f7fb;
+  color: #1f2937;
+}
+
+.page-wrapper {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 24px;
+}
+
+.page-header h1 {
+  margin-bottom: 8px;
+}
+
+.page-header p {
+  margin-top: 0;
+  color: #4b5563;
+}
+
+.court-card {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+
+.court-image {
+  width: 260px;
+  min-width: 260px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #4f46e5, #22c55e);
+}
+
+.court-image-content {
+  font-size: 72px;
+}
+
+.court-details {
+  flex: 1;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 132px;
+}
+
+.court-details h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+}
+
+.court-details p {
+  margin: 0;
+  color: #6b7280;
+}
+
+.booking-btn {
+  align-self: flex-end;
+  margin-top: 16px;
+  background: #2563eb;
+  color: white;
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.booking-btn:hover {
+  background: #1d4ed8;
+}
+
+@media (max-width: 700px) {
+  .court-card {
+    flex-direction: column;
+  }
+
+  .court-image {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .court-details {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
