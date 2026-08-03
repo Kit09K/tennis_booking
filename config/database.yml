@@ -90,6 +90,7 @@ test:
 production:
   primary: &primary_production
     <<: *default
+    url: <%= ENV['DATABASE_URL'] %>
     database: tennis_cord_development
     username: tennis_cord_development_user
     password: kQ3OI9XfjfCg1yDPnIBLTzXrZ5HmNS6v
