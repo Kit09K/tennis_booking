@@ -90,9 +90,9 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: tennis_cord_production
-    username: tennis_cord
-    password: <%= ENV["TENNIS_CORD_DATABASE_PASSWORD"] %>
+    database: tennis_cord_development
+    username: tennis_cord_development_user
+    password: kQ3OI9XfjfCg1yDPnIBLTzXrZ5HmNS6v
   cache:
     <<: *primary_production
     database: tennis_cord_production_cache
