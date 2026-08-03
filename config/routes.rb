@@ -4,6 +4,7 @@ Rails.application.routes.draw do
     resources :adjustcords, only: [:create, :destroy]
   end
   resources :topups, only: [:new, :create]
+  resources :bookings, only: [:create]
   get "cords/Cords"
   get "cords/index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

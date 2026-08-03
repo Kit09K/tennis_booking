@@ -23,9 +23,16 @@ let existingBookings = [];
 let closedDates = [];
 const selectedSlots = {};
 
+let _courtBookingInitialized = false;
 function initCourtBooking() {
+  if (_courtBookingInitialized) return;
+  _courtBookingInitialized = true;
+  
   const pageWrapper = document.querySelector(".page-wrapper[data-bookings]");
-  if (!pageWrapper) return;
+  if (!pageWrapper) {
+    _courtBookingInitialized = false;
+    return;
+  }
 
   try {
     existingBookings = JSON.parse(pageWrapper.dataset.bookings || "[]");
@@ -150,17 +157,20 @@ async function handleBookingClick(courtId, courtName) {
     return;
   }
 
-  const confirmMsg = `ยืนยันการจองสนาม ${courtName}\nวันที่: ${selectedDate}\nเวลา: ${selectedSlot}\nราคา: 500 บาท`;
+  const phoneInput = document.getElementById(`phone-${courtId}`);
+  const phone = phoneInput ? phoneInput.value.trim() : "";
+
+  if (!phone) {
+    alert("กรุณากรอกเบอร์โทรศัพท์เพื่อทำการจอง");
+    if (phoneInput) phoneInput.focus();
+    return;
+  }
+
+  const confirmMsg = `ยืนยันการจองสนาม ${courtName}\nวันที่: ${selectedDate}\nเวลา: ${selectedSlot}\nเบอร์โทรศัพท์: ${phone}\nราคา: 500 บาท`;
   if (confirm(confirmMsg)) {
     const [startStr] = selectedSlot.split("-");
     const startHour = parseInt(startStr);
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-
-    const phone = prompt("กรุณากรอกเบอร์โทรศัพท์ของคุณเพื่อยืนยันการจอง:");
-    if (!phone) {
-      alert("จำเป็นต้องกรอกเบอร์โทรศัพท์เพื่อทำการจอง");
-      return;
-    }
 
     try {
       const response = await fetch("/bookings", {

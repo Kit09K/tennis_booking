@@ -216,12 +216,12 @@
           <p class="text-slate-600 mb-6">Hello!, <span class="font-semibold text-blue-950"><%= current_user&.name %></span></p>
         <% end %>
 
-        <div class="payment-notice mb-8 rounded-xl border-l-4 border-blue-700 bg-blue-50 px-5 py-4">
+        <!-- <div class="payment-notice mb-8 rounded-xl border-l-4 border-blue-700 bg-blue-50 px-5 py-4">
           <p class="text-sm text-blue-900">
             <strong>Please transfer payment to the following account:</strong>
             KBank, Account Number: 123-4-56789-0 (Account Name: Tennis Club)
           </p>
-        </div>
+        </div> -->
 
         <div class="courts-list flex flex-col gap-6">
           <% (@cords || []).each do |cord| %>
@@ -256,6 +256,17 @@
                     data-court-id="<%= cord.id %>"
                     value="<%= Date.today.strftime("%Y-%m-%d") %>"
                     min="<%= Date.today.strftime("%Y-%m-%d") %>"
+                  />
+                </div>
+
+                <div class="booking-field-group mb-5">
+                  <label for="phone-<%= cord.id %>" class="block text-sm font-bold text-blue-950 mb-1.5">Phone Number:</label>
+                  <input
+                    type="tel"
+                    id="phone-<%= cord.id %>"
+                    class="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm text-blue-950 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
+                    placeholder="กรอกเบอร์โทรศัพท์"
+                    required
                   />
                 </div>
 
