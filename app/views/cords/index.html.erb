@@ -1,27 +1,20 @@
 <div class="page-wrapper" data-bookings="<%= (@bookings || []).to_json %>">
-  
   <div class="page-header">
     <h1 data-testid="court-name">Tennis Court Booking</h1>
   </div>
-
-  <p> Hello!, <%= current_user&.name %></p>
-
+  <p> Hello!, <%= current_user&.first_name %></p>
   <div class="payment-notice">
     <p><strong>Please transfer payment to the following account:</strong> KBank, Account Number: 123-4-56789-0 (Account Name: Tennis Club)</p>
   </div>
-
   <div class="courts-list">
     <% (@cords || []).each do |cord| %>
       <div class="court-card" data-court-id="<%= cord.id %>" data-court-name="<%= cord.name %>">
-        
         <div class="court-image" aria-label="Tennis court image">
           <span class="court-image-content">
             <%= image_tag cord.try(:image_url).presence || "Tennis-Court.jpg", alt: cord.name %>
           </span>
         </div>
-
         <div class="court-details">
-          
           <div class="court-status">
             <% if cord.temporarily_closed? %>
               <span class="status-closed">Temporarily Closed</span>
@@ -29,11 +22,9 @@
               <span class="status-available">Available</span>
             <% end %>
           </div>
-
           <h2 data-testid="court-name"><%= cord.name %></h2>
           <p data-testid="court-location"><%= cord.location %></p>
           <p data-testid="court-details">Indoor • Hard surface</p>
-
           <div class="booking-field-group">
             <label for="date-<%= cord.id %>">Booking Date:</label>
             <input 
@@ -45,17 +36,14 @@
               min="<%= Date.today.strftime("%Y-%m-%d") %>"
             />
           </div>
-
           <div class="booking-field-group">
             <label>Booking Time Available: 6.00am-24.00pm</label>
             <div class="slots-container" id="slots-<%= cord.id %>" data-court-id="<%= cord.id %>">
             </div>
-            
             <div class="price-info-tag">
               ราคาการจอง: <span data-testid="price-amount">500 baht</span> / ชั่วโมง
             </div>
           </div>
-
           <div class="card-footer">
             <% if cord.temporarily_closed? %>
               <%= link_to "Temporarily Closed", "#", class: "booking-btn disabled", disabled: true, "data-testid": "booking-btn" %>
@@ -71,10 +59,8 @@
               </button>
             <% end %>
           </div>
-
         </div>
       </div>
     <% end %>
   </div>
-
 </div>
