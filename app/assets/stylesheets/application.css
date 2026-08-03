@@ -1,93 +1,204 @@
-/*
- * This is a manifest file that'll be compiled into application.css.
- *
- * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
- * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
- * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
- * depending on specificity.
- *
- * Consider organizing styles into separate files for maintainability.
- */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f7fb;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f3f4f6;
   color: #1f2937;
+  line-height: 1.5;
 }
 
 .page-wrapper {
-  max-width: 900px;
-  margin: 40px auto;
-  padding: 24px;
+  max-width: 850px;
+  margin: 30px auto;
+  padding: 0 16px;
 }
 
 .page-header h1 {
-  margin-bottom: 8px;
+  margin: 0 0 16px 0;
+  font-size: 26px;
+  color: #111827;
 }
 
-.page-header p {
-  margin-top: 0;
-  color: #4b5563;
+/* Payment Notice Box */
+.payment-notice {
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-left: 4px solid #3b82f6;
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 24px;
+}
+
+.payment-notice p {
+  margin: 0;
+  font-size: 14px;
+  color: #1e40af;
+}
+
+.courts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .court-card {
   display: flex;
-  align-items: center;
   background: #ffffff;
-  border-radius: 18px;
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
 .court-image {
-  width: 260px;
-  min-width: 260px;
-  height: 180px;
+  width: 220px;
+  min-width: 220px;
+  background: #e5e7eb;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #4f46e5, #22c55e);
 }
 
-.court-image-content {
-  font-size: 72px;
+.court-image-content img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .court-details {
   flex: 1;
-  padding: 24px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  min-height: 132px;
 }
 
-.court-details h2 {
-  margin: 0 0 8px;
-  font-size: 24px;
-}
-
-.court-details p {
-  margin: 0;
-  color: #6b7280;
-}
-
-.booking-btn {
-  align-self: flex-end;
-  margin-top: 16px;
-  background: #2563eb;
-  color: white;
-  text-decoration: none;
-  padding: 10px 16px;
-  border-radius: 999px;
+.court-status {
+  margin-bottom: 6px;
+  font-size: 13px;
   font-weight: 600;
 }
 
-.booking-btn:hover {
-  background: #1d4ed8;
+.status-available {
+  color: #16a34a;
 }
 
-@media (max-width: 700px) {
+.status-closed {
+  color: #dc2626;
+}
+
+.court-details h2 {
+  margin: 0 0 4px 0;
+  font-size: 20px;
+  color: #111827;
+}
+
+.court-details p {
+  margin: 0 0 16px 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.booking-field-group {
+  margin-bottom: 14px;
+}
+
+.booking-field-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.court-date-picker {
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.slots-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 160px;
+  overflow-y: auto;
+  padding: 2px;
+}
+
+.slot-pill {
+  padding: 6px 12px;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  color: #374151;
+  transition: all 0.15s ease;
+}
+
+.slot-pill:hover:not(.booked) {
+  background: #e5e7eb;
+}
+
+.slot-pill.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #1d4ed8;
+}
+
+.slot-pill.booked {
+  background-color: #fee2e2;
+  border-color: #fca5a5;
+  color: #dc2626;
+  cursor: not-allowed;
+  font-weight: 500;
+}
+
+.price-info-tag {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #374151;
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.price-amount {
+  font-weight: 700;
+  color: #16a34a;
+  font-size: 15px;
+}
+
+/* Bottom Right Booking Button Container */
+.card-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.booking-btn {
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.booking-btn:hover:not(.disabled) {
+  background-color: #1d4ed8;
+}
+
+.booking-btn.disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
   .court-card {
     flex-direction: column;
   }
@@ -95,10 +206,6 @@ body {
   .court-image {
     width: 100%;
     min-width: 100%;
-  }
-
-  .court-details {
-    width: 100%;
-    box-sizing: border-box;
+    height: 140px;
   }
 }
