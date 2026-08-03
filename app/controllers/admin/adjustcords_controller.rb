@@ -25,12 +25,13 @@ class Admin::AdjustcordsController < ApplicationController
 
     # 2. Cancel bookings within this period and refund 500
     affected_bookings = cord.bookings.where("start_time >= ? AND start_time <= ?", start_date, end_date)
-    
+
     affected_bookings.each do |booking|
-      # Refund 500
-      booking.user.topups.create!(amount: 500, status: 'approved')
       # Record cancellation (this excludes it from active bookings)
-      Cancle.find_or_create_by!(booking_id: booking.id)
+      c  = Cancle.find_or_create_by!(booking_id: booking.id)
+      if c.previously_new_record?
+        booking.user.topups.create!(amount: 500, status: "approved")
+      end
     end
 
     redirect_to root_path, notice: "ตั้งค่าปิดปรับปรุงสนามสำเร็จ และคืนเครดิตให้ลูกค้าที่จองล่วงหน้าในวันนั้นเรียบร้อยแล้ว"
