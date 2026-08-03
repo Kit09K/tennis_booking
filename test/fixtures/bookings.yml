@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  cord: one
+  start_time: 2026-08-03 10:33:37
+  end_time: 2026-08-03 10:33:37
+  account_number: MyString
+  name_account: MyString
+
+two:
+  user: two
+  cord: two
+  start_time: 2026-08-03 10:33:37
+  end_time: 2026-08-03 10:33:37
+  account_number: MyString
+  name_account: MyString

@@ -1,0 +1,2 @@
+class Cord < ApplicationRecord
+end
