@@ -10,9 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_03_033350) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_03_063151) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "adjustcords", force: :cascade do |t|
+    t.bigint "cord_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "end_date"
+    t.datetime "start_date"
+    t.datetime "updated_at", null: false
+    t.index ["cord_id"], name: "index_adjustcords_on_cord_id"
+  end
 
   create_table "bookings", force: :cascade do |t|
     t.string "account_number"
@@ -20,6 +29,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_03_033350) do
     t.datetime "created_at", null: false
     t.datetime "end_time"
     t.string "name_account"
+    t.string "phone"
     t.datetime "start_time"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
@@ -48,6 +58,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_03_033350) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "adjustcords", "cords"
   add_foreign_key "bookings", "cords"
   add_foreign_key "bookings", "users"
   add_foreign_key "cancles", "bookings"

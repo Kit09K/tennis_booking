@@ -12,6 +12,12 @@ class Booking < ApplicationRecord
   validates :name_account,
             format: { without: /\d/, message: "กรุณาใส่เป็นตัวอักษรเท่านั้น" }
 
+  validates :phone, presence: true,
+          format: {
+            with: /\A0[0-9]{8,9}\z/,
+            message: "ต้องเป็นเบอร์โทรศัพท์ที่ถูกต้อง (เช่น 0812345678 หรือ 021234567)"
+          }
+
   private
   def calculate_end
     nil if start_time.blank?
