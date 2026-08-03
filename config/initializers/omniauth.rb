@@ -3,9 +3,9 @@ Rails.application.config.middleware.use OmniAuth::Builder do
            ENV.fetch("KEYCLOAK_CLIENT_ID", ""),
            ENV.fetch("KEYCLOAK_CLIENT_SECRET", ""),
            client_options: {
-             site: "https://sso-dev.odd.works",
-             realm: "odt",
-             base_url: ""
+             site: 'https://sso-dev.odd.works',
+             realm: 'exam-internship',
+             base_url: ''
            },
            name: "keycloak"
 end
