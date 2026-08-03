@@ -6,6 +6,20 @@ class Admin::AdjustcordsController < ApplicationController
     start_date = Date.parse(params[:start_date]).beginning_of_day
     end_date = Date.parse(params[:end_date]).end_of_day
 
+    if start_date < Date.today.beginning_of_day
+      return redirect_to root_path, alert: "ไม่สามารถตั้งค่าปิดปรับปรุงย้อนหลังได้"
+    end
+
+    if start_date > end_date
+      return redirect_to root_path, alert: "วันที่เริ่มต้นต้องไม่ช้ากว่าวันที่สิ้นสุด"
+    end
+
+    # Check for overlap: New period (start_date, end_date) overlaps with an existing period (db_start, db_end)
+    # if start_date <= db_end AND end_date >= db_start
+    if cord.adjustcords.where("start_date <= ? AND end_date >= ?", end_date, start_date).exists?
+      return redirect_to root_path, alert: "ไม่สามารถบันทึกได้ เนื่องจากวันที่เลือกซ้ำซ้อนกับช่วงเวลาที่ปิดปรับปรุงไปแล้ว"
+    end
+
     # 1. Save adjustcord (maintenance period)
     adjustcord = cord.adjustcords.create!(start_date: start_date, end_date: end_date)
 

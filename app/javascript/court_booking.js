@@ -67,6 +67,19 @@ function checkAndApplyDate(input, courtId) {
   const selectedDate = new Date(selectedDateStr);
   selectedDate.setHours(0,0,0,0);
   
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  if (selectedDate < today) {
+    input.value = "";
+    document.getElementById(`slots-${courtId}`).innerHTML = "<p style='color: red; font-weight: bold;'>ไม่สามารถจองย้อนหลังได้</p>";
+    if (btn) {
+      btn.disabled = true;
+      btn.classList.add("cursor-not-allowed", "opacity-50");
+    }
+    return;
+  }
+  
   const isClosed = closedDates.some(range => {
     const start = new Date(range.start_date);
     start.setHours(0,0,0,0);

@@ -33,13 +33,15 @@
           <h3 class="text-white font-semibold text-base mb-0.5"><%= session[:userinfo]["name"] %></h3>
           <p class="text-blue-300 text-xs"><%= session[:userinfo]["email"] %></p>
 
-          <div class="mt-4 rounded-xl bg-blue-900/40 border border-amber-400/20 px-4 py-3">
-            <div class="flex items-center justify-center gap-1.5 mb-1">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5 text-amber-400"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M9 10.5h6M9 13.5h6"/></svg>
-              <p class="text-blue-300 text-xs uppercase tracking-wide font-semibold">เครดิตคงเหลือ</p>
+          <% unless session[:is_admin] %>
+            <div class="mt-4 rounded-xl bg-blue-900/40 border border-amber-400/20 px-4 py-3">
+              <div class="flex items-center justify-center gap-1.5 mb-1">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5 text-amber-400"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M9 10.5h6M9 13.5h6"/></svg>
+                <p class="text-blue-300 text-xs uppercase tracking-wide font-semibold">เครดิตคงเหลือ</p>
+              </div>
+              <p class="text-amber-400 text-2xl font-extrabold"><%= current_user&.balance || 0 %> <span class="text-sm text-white font-medium">บาท</span></p>
             </div>
-            <p class="text-amber-400 text-2xl font-extrabold"><%= current_user&.balance || 0 %> <span class="text-sm text-white font-medium">บาท</span></p>
-          </div>
+          <% end %>
         </div>
 
         <div class="flex flex-col gap-2.5">
@@ -123,12 +125,12 @@
             <div class="flex flex-col sm:flex-row gap-4 mb-5">
               <div class="flex-1">
                 <label class="block text-sm font-semibold text-blue-950 mb-1.5">ตั้งแต่วันที่</label>
-                <input type="date" name="start_date" required min="<%= Date.today.strftime("%Y-%m-%d") %>"
+                <input type="date" name="start_date" id="admin_start_date" required min="<%= Date.today.strftime("%Y-%m-%d") %>"
                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-blue-950 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400">
               </div>
               <div class="flex-1">
                 <label class="block text-sm font-semibold text-blue-950 mb-1.5">ถึงวันที่</label>
-                <input type="date" name="end_date" required min="<%= Date.today.strftime("%Y-%m-%d") %>"
+                <input type="date" name="end_date" id="admin_end_date" required min="<%= Date.today.strftime("%Y-%m-%d") %>"
                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-blue-950 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400">
               </div>
             </div>
@@ -137,6 +139,29 @@
                   class: "btn btn-danger rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2.5 transition-colors cursor-pointer",
                   data: { turbo: false } %>
           <% end %>
+
+          <script>
+            document.addEventListener("DOMContentLoaded", bindAdminDates);
+            document.addEventListener("turbo:load", bindAdminDates);
+
+            function bindAdminDates() {
+              const startInput = document.getElementById("admin_start_date");
+              const endInput = document.getElementById("admin_end_date");
+              
+              if (startInput && endInput) {
+                startInput.addEventListener("change", function() {
+                  if (this.value) {
+                    endInput.min = this.value;
+                  }
+                });
+                endInput.addEventListener("change", function() {
+                  if (this.value) {
+                    startInput.max = this.value;
+                  }
+                });
+              }
+            }
+          </script>
         </div>
 
         <!-- Table Card -->
