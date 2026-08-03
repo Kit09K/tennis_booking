@@ -1,7 +1,5 @@
 class CordsController < ApplicationController
-  def Cords
-  end
-
   def index
+    @cords = Cord.all
   end
 end

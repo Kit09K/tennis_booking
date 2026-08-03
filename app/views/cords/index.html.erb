@@ -3,21 +3,23 @@
     <h1>Tennis Courts</h1>
     <p>Hello, <strong><%= current_user&.name || "Guest" %></strong>!</p>
   </div>
-
-  <div class="court-card">
-    <div class="court-image" aria-label="Tennis court image">
-      <span class="court-image-content">
-        <img src="Tennis_Court.jpg" alt="Tennis Court 1">
-      </span>
-    </div>
-
-    <div class="court-details">
-      <div>
-        <h2>Court 1</h2>
-        <p>Indoor • Hard surface</p>
+  <% if @cords.any? %>
+    <% @cords.each do |cord| %>
+      <div class="court-card">
+        <div class="court-image" aria-label="Tennis court image">
+          <span class="court-image-content">
+            <%= image_tag cord.try(:image_url).presence || "Tennis-Court.jpg", alt: cord.name %>
+          </span>
+        </div>
+        <div class="court-details">
+          <div>
+            <h2><%= cord.name %></h2>
+          </div>
+          <%= link_to "Book Now", cord_path(cord), class: "booking-btn" %>
+        </div>
       </div>
-
-      <%= link_to "Book Now", "#", class: "booking-btn" %>
-    </div>
-  </div>
+    <% end %>
+  <% else %>
+    <p class="text-gray-500">No courts available right now.</p>
+  <% end %>
 </div>
