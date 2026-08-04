@@ -72,8 +72,8 @@
           <div class="avatar w-16 h-16 mx-auto mb-3 rounded-full bg-blue-900/60 text-blue-400 flex items-center justify-center border-2 border-dashed border-blue-800">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           </div>
-          <p class="text-white font-medium text-sm mb-1">ผู้เยี่ยมชม</p>
-          <p class="text-blue-300 text-xs">กรุณาเข้าสู่ระบบเพื่อใช้งานเต็มรูปแบบ</p>
+          <p class="text-white font-medium text-sm mb-1">Guest</p>
+          <p class="text-blue-300 text-xs">For Booking Court</p>
         </div>
         <%= button_to "/auth/keycloak", method: :post,
               class: "btn w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-blue-950 font-bold py-2.5 shadow-md shadow-amber-500/20 transition-all",
@@ -241,9 +241,10 @@
                 </div>
 
                 <!-- 2. Phone Number (ขึ้นบรรทัดใหม่ + กรอบขนาดสั้น max-w-[200px]) -->
+                <% if !session[:user_id].nil? %>
                 <div class="booking-field-group mb-4">
-                  <label for="phone-<%= cord.id %>" class="block text-xs font-bold text-blue-950 mb-1">Phone Number:</label>
-                  <input
+                    <label for="phone-<%= cord.id %>" class="block text-xs font-bold text-blue-950 mb-1">Phone Number:</label>
+                    <input
                     type="tel"
                     id="phone-<%= cord.id %>"
                     name="booking[phone]"
@@ -252,173 +253,175 @@
                     class="court-phone-input w-auto max-w-[200px] rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-blue-950 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
                   />
                 </div>
+                <% end %>
 
                 <% if is_court_closed_today %>
                   <div class="rounded-xl bg-amber-50 border border-amber-200 p-4 text-center my-2">
-                    <p class="text-xs font-bold text-amber-900">⚠️ Court is temporarily closed on <%= Date.parse(current_court_date).strftime("%d/%m/%Y") rescue current_court_date %></p>
-                  </div>
-                <% else %>
-                  <!-- Time Slots Grid -->
-                  <div class="booking-field-group mb-4">
-                    <label class="block text-xs font-bold text-blue-950 mb-2">Booking Time Available: 06:00 - 24:00</label>
-                    <div class="slots-container grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                      <% (6..23).each do |hour| %>
-                        <% 
-                        is_today = (current_court_date == Time.current.in_time_zone.strftime("%Y-%m-%d"))
-  current_time = Time.current.in_time_zone
-  
-  # กำหนดเวลาเริ่มต้นและสิ้นสุดของรอบเวลานี้ในวันนั้นๆ
-  slot_start_time = Time.zone.parse("#{current_court_date} #{format('%02d:00', hour)}")
-  slot_end_time = hour == 23 ? Time.zone.parse("#{current_court_date} 24:00") : Time.zone.parse("#{current_court_date} #{format('%02d:00', hour + 1)}")
-  
-  # ซ่อนก็ต่อเมื่อเลยเวลาสิ้นสุดของรอบนั้นไปแล้ว (ในกรณีที่เป็นวันปัจจุบัน)
-  is_past_time = is_today && (current_time >= slot_end_time)
-
-  next if is_past_time
-
-                        user_booking_this_slot = if current_user.present?
-                          current_user.bookings.find do |b|
-                            b.cord_id == cord.id && 
-                            b.start_time.in_time_zone.strftime("%Y-%m-%d") == current_court_date && 
-                            b.start_time.in_time_zone.hour == hour &&
-                            b.end_time > Time.current &&
-                            !cancelled_booking_ids.include?(b.id)
-                          end
-                        else
-                          nil
-                        end
-
-                        is_booked = (@bookings || []).any? do |b|
-                          b[:cord_id] == cord.id && 
-                          b[:date] == current_court_date && 
-                          b[:start_hour] == hour &&
-                          !cancelled_booking_ids.include?(b[:id])
-                        end
-
-                        time_start = format('%02d:00', hour)
-                        time_end   = format('%02d:00', hour + 1 == 24 ? 0 : hour + 1)
-                      %>
-                        <% if user_booking_this_slot.present? %>
-                          <div class="flex flex-col items-center justify-center p-2 rounded-xl bg-amber-50 text-amber-900 border border-amber-300 text-center cursor-not-allowed">
-                            <span class="text-xs font-bold"><%= time_start %> - <%= time_end %></span>
-                            <span class="text-[10px] text-amber-700 font-bold mt-0.5">My Booking</span>
-                          </div>
-                        <% elsif is_booked %>
-                          <div class="flex flex-col items-center justify-center p-2 rounded-xl bg-red-100 text-slate-400 border border-red-200 cursor-not-allowed text-center">
-                            <span class="text-xs font-bold"><%= time_start %> - <%= time_end %></span>
-                            <span class="text-[10px] text-red-500 font-medium mt-0.5">Booked</span>
-                          </div>
-                        <% elsif user_has_booking_on_this_court %>
-                          <div class="flex flex-col items-center justify-center p-2 rounded-xl bg-slate-50 text-slate-300 border border-slate-200 cursor-not-allowed text-center" title="You already have an active booking for this court">
-                            <span class="text-xs font-bold"><%= time_start %> - <%= time_end %></span>
-                            <span class="text-[10px] text-slate-400 font-medium mt-0.5">Already booked another court</span>
-                          </div>
-                        <% else %>
-                          <button
-                          type="button"
-                          onclick="selectTimeSlot('<%= cord.id %>', <%= hour %>, '<%= time_start %> - <%= time_end %>', this)"
-                          class="time-slot-btn-<%= cord.id %> w-full flex flex-col items-center justify-center p-2 rounded-xl bg-blue-50/50 hover:bg-amber-100 text-blue-950 border border-blue-100 transition-all text-center group shadow-sm cursor-pointer"
-                        >
-                            <span class="text-xs font-bold"><%= time_start %> - <%= time_end %></span>
-                            <span class="text-[10px] text-emerald-600 group-hover:text-amber-800 font-medium mt-0.5 slot-status-text">Available</span>
-                          </button>
-                        <% end %>
-                      <% end %>
+                      <p class="text-xs font-bold text-amber-900">⚠️ Court is temporarily closed on <%= Date.parse(current_court_date).strftime("%d/%m/%Y") rescue current_court_date %></p>
                     </div>
+                  <% else %>
+                    <!-- Time Slots Grid -->
+                    <div class="booking-field-group mb-4">
+                      <label class="block text-xs font-bold text-blue-950 mb-2">Booking Time Available: 06:00 - 24:00</label>
+                      <div class="slots-container grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                        <% (6..23).each do |hour| %>
+                          <% 
+                            is_today = (current_court_date == Time.current.in_time_zone.strftime("%Y-%m-%d"))
+                            current_time = Time.current.in_time_zone
+                            
+                            # กำหนดเวลาเริ่มต้นและสิ้นสุดของรอบเวลานี้ในวันนั้นๆ
+                            slot_start_time = Time.zone.parse("#{current_court_date} #{format('%02d:00', hour)}")
+                            slot_end_time = hour == 23 ? Time.zone.parse("#{current_court_date} 24:00") : Time.zone.parse("#{current_court_date} #{format('%02d:00', hour + 1)}")
+                            
+                            # ซ่อนก็ต่อเมื่อเลยเวลาสิ้นสุดของรอบนั้นไปแล้ว (ในกรณีที่เป็นวันปัจจุบัน)
+                            is_past_time = is_today && (current_time >= slot_end_time)
+
+                            next if is_past_time
+
+                            user_booking_this_slot = if current_user.present?
+                              current_user.bookings.find do |b|
+                                b.cord_id == cord.id && 
+                                b.start_time.in_time_zone.strftime("%Y-%m-%d") == current_court_date && 
+                                b.start_time.in_time_zone.hour == hour &&
+                                b.end_time > Time.current &&
+                                !cancelled_booking_ids.include?(b.id)
+                              end
+                            else
+                              nil
+                            end
+
+                            is_booked = (@bookings || []).any? do |b|
+                              b[:cord_id] == cord.id && 
+                              b[:date] == current_court_date && 
+                              b[:start_hour] == hour &&
+                              !cancelled_booking_ids.include?(b[:id])
+                            end
+
+                            time_start = format('%02d:00', hour)
+                            time_end   = format('%02d:00', hour + 1 == 24 ? 0 : hour + 1)
+                          %>
+                          <% if user_booking_this_slot.present? %>
+                            <div class="flex flex-col items-center justify-center p-2 rounded-xl bg-amber-50 text-amber-900 border border-amber-300 text-center cursor-not-allowed">
+                              <span class="text-xs font-bold"><%= time_start %> - <%= time_end %></span>
+                              <span class="text-[10px] text-amber-700 font-bold mt-0.5">My Booking</span>
+                            </div>
+                          <% elsif is_booked %>
+                            <div class="flex flex-col items-center justify-center p-2 rounded-xl bg-red-100 text-slate-400 border border-red-200 cursor-not-allowed text-center">
+                              <span class="text-xs font-bold"><%= time_start %> - <%= time_end %></span>
+                              <span class="text-[10px] text-red-500 font-medium mt-0.5">Booked</span>
+                            </div>
+                          <% elsif user_has_booking_on_this_court %>
+                            <div class="flex flex-col items-center justify-center p-2 rounded-xl bg-slate-50 text-slate-300 border border-slate-200 cursor-not-allowed text-center" title="You already have an active booking for this court">
+                              <span class="text-xs font-bold"><%= time_start %> - <%= time_end %></span>
+                              <span class="text-[10px] text-slate-400 font-medium mt-0.5">Already booked another court</span>
+                            </div>
+                          <% elsif session[:userinfo].blank? %>
+                            <div class="flex flex-col items-center justify-center p-2 rounded-xl bg-slate-100 text-slate-400 border border-slate-200 text-center cursor-not-allowed" title="Please login to book">
+                              <span class="text-xs font-bold"><%= time_start %> - <%= time_end %></span>
+                              <span class="text-[10px] text-slate-400 font-medium mt-0.5">Available</span>
+                            </div>
+                          <% else %>
+                            <button
+                              type="button"
+                              onclick="selectTimeSlot('<%= cord.id %>', <%= hour %>, '<%= time_start %> - <%= time_end %>', this)"
+                              class="time-slot-btn-<%= cord.id %> w-full flex flex-col items-center justify-center p-2 rounded-xl bg-blue-50/50 hover:bg-amber-100 text-blue-950 border border-blue-100 transition-all text-center group shadow-sm cursor-pointer"
+                            >
+                              <span class="text-xs font-bold"><%= time_start %> - <%= time_end %></span>
+                              <span class="text-[10px] text-emerald-600 group-hover:text-amber-800 font-medium mt-0.5 slot-status-text">Available</span>
+                            </button>
+                          <% end %>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                  <!-- Booking Price ย้ายมาไว้ใต้กล่องเวลา -->
+                  <div class="price-info-tag text-sm text-slate-700 mb-4">
+                    Booking Price: <span data-testid="price-amount" class="font-semibold text-blue-950"><%= court_price %> THB</span> / hour
+                  </div>
+                  <!-- Footer / ปุ่ม Booking -->
+                  <div class="card-footer mt-auto flex justify-end pt-2">
+                    <% if cord.temporarily_closed? || is_court_closed_today %>
+                      <%= link_to "Temporarily Closed", "#", class: "booking-btn disabled inline-block rounded-xl bg-slate-200 text-slate-400 font-semibold px-6 py-2.5 cursor-not-allowed", disabled: true %>
+                    <% elsif user_has_booking_on_this_court %>
+                      <button type="button" class="booking-btn rounded-xl bg-slate-200 text-slate-400 font-semibold px-6 py-2.5 cursor-not-allowed" disabled>
+                        Already Booked
+                      </button>
+                    <% elsif session[:userinfo].blank? %>
+                    <% else %>
+                      <% current_user_balance = current_user&.balance || 0 %>
+                      <button
+                        type="submit"
+                        onclick="return validateBookingForm('<%= cord.id %>', '<%= cord.name %>', <%= court_price %>, <%= current_user_balance %>);"
+                        class="booking-btn rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-blue-950 font-bold px-8 py-3 shadow-md shadow-amber-500/20 transition-all cursor-pointer flex items-center gap-2"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M12 14v4"/><path d="M10 16h4"/></svg>
+                        Booking
+                      </button>
+                    <% end %>
                   </div>
                 <% end %>
-                <!-- Booking Price ย้ายมาไว้ใต้กล่องเวลา -->
-                <div class="price-info-tag text-sm text-slate-700 mb-4">
-                  Booking Price: <span data-testid="price-amount" class="font-semibold text-blue-950"><%= court_price %> THB</span> / hour
-                </div>
-                <!-- Footer / ปุ่ม Booking -->
-                <div class="card-footer mt-auto flex justify-end pt-2">
-                  <% if cord.temporarily_closed? || is_court_closed_today %>
-                    <%= link_to "Temporarily Closed", "#", class: "booking-btn disabled inline-block rounded-xl bg-slate-200 text-slate-400 font-semibold px-6 py-2.5 cursor-not-allowed", disabled: true %>
-                  <% elsif user_has_booking_on_this_court %>
-                    <!-- เพิ่มเงื่อนไขกรณีเคยจองสนามนี้ไปแล้ว -->
-                    <button type="button" class="booking-btn rounded-xl bg-slate-200 text-slate-400 font-semibold px-6 py-2.5 cursor-not-allowed" disabled>
-                      Already Booked
-                    </button>
-                  <% elsif session[:userinfo].blank? %>
-                    <%= button_to "Login to Book", "/auth/keycloak", method: :post,
-        class: "booking-btn rounded-xl bg-blue-950 hover:bg-blue-900 text-white font-semibold px-6 py-2.5 transition-colors",
-        data: { turbo: false } %>
-                  <% else %>
-                    <% current_user_balance = current_user&.balance || 0 %>
-                    <button
-      type="submit"
-      onclick="return validateBookingForm('<%= cord.id %>', '<%= cord.name %>', <%= court_price %>, <%= current_user_balance %>);"
-      class="booking-btn rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-blue-950 font-bold px-8 py-3 shadow-md shadow-amber-500/20 transition-all cursor-pointer flex items-center gap-2"
-    >
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M12 14v4"/><path d="M10 16h4"/></svg>
-                      Booking
-                    </button>
-                  <% end %>
-                </div>
-              <% end %>
-            </div>
-          <% end %>
+              </div>
+            <% end %>
+          </div>
         </div>
-      </div>
-      <!-- JavaScript สำหรับจัดการการเลือกรอบเวลาและการตรวจสอบข้อมูล -->
-      <script>
-        const selectedSlotDetails = {};
+        <!-- JavaScript สำหรับจัดการการเลือกรอบเวลาและการตรวจสอบข้อมูล -->
+        <script>
+          const selectedSlotDetails = {};
 
-        function selectTimeSlot(courtId, hour, timeText, btn) {
-          // เคลียร์ปุ่มไฮไลต์เดิมในสนามเดียวกัน
-          const buttons = document.querySelectorAll('.time-slot-btn-' + courtId);
-          buttons.forEach(b => {
-            b.classList.remove('bg-amber-400', 'border-amber-500', 'ring-2', 'ring-amber-400', 'text-blue-950');
-            b.classList.add('bg-blue-50/50', 'border-blue-100', 'text-blue-950');
-            const statusText = b.querySelector('.slot-status-text');
+          function selectTimeSlot(courtId, hour, timeText, btn) {
+            // เคลียร์ปุ่มไฮไลต์เดิมในสนามเดียวกัน
+            const buttons = document.querySelectorAll('.time-slot-btn-' + courtId);
+            buttons.forEach(b => {
+              b.classList.remove('bg-amber-400', 'border-amber-500', 'ring-2', 'ring-amber-400', 'text-blue-950');
+              b.classList.add('bg-blue-50/50', 'border-blue-100', 'text-blue-950');
+              const statusText = b.querySelector('.slot-status-text');
+              if (statusText) {
+                statusText.innerText = 'Available';
+                statusText.className = 'text-[10px] text-emerald-600 group-hover:text-amber-800 font-medium mt-0.5 slot-status-text';
+              }
+            });
+
+            // ใส่ไฮไลต์ให้ปุ่มที่ถูกเลือก
+            btn.classList.remove('bg-blue-50/50', 'border-blue-100');
+            btn.classList.add('bg-amber-400', 'border-amber-500', 'ring-2', 'ring-amber-400', 'text-blue-950');
+            const statusText = btn.querySelector('.slot-status-text');
             if (statusText) {
-              statusText.innerText = 'Available';
-              statusText.className = 'text-[10px] text-emerald-600 group-hover:text-amber-800 font-medium mt-0.5 slot-status-text';
+              statusText.innerText = 'Selected';
+              statusText.className = 'text-[10px] text-blue-950 font-bold mt-0.5 slot-status-text';
             }
-          });
 
-          // ใส่ไฮไลต์ให้ปุ่มที่ถูกเลือก
-          btn.classList.remove('bg-blue-50/50', 'border-blue-100');
-          btn.classList.add('bg-amber-400', 'border-amber-500', 'ring-2', 'ring-amber-400', 'text-blue-950');
-          const statusText = btn.querySelector('.slot-status-text');
-          if (statusText) {
-            statusText.innerText = 'Selected';
-            statusText.className = 'text-[10px] text-blue-950 font-bold mt-0.5 slot-status-text';
+            // บันทึกค่าลง hidden field
+            document.getElementById('selected-hour-' + courtId).value = hour;
+            selectedSlotDetails[courtId] = timeText;
           }
 
-          // บันทึกค่าลง hidden field
-          document.getElementById('selected-hour-' + courtId).value = hour;
-          selectedSlotDetails[courtId] = timeText;
-        }
+          function validateBookingForm(courtId, courtName, price, userBalance) {
+            const selectedHour = document.getElementById('selected-hour-' + courtId).value;
+            const phoneInput = document.getElementById('phone-' + courtId);
+            const phoneVal = phoneInput ? phoneInput.value.trim() : '';
 
-        function validateBookingForm(courtId, courtName, price, userBalance) {
-          const selectedHour = document.getElementById('selected-hour-' + courtId).value;
-          const phoneInput = document.getElementById('phone-' + courtId);
-          const phoneVal = phoneInput ? phoneInput.value.trim() : '';
+            if (!selectedHour) {
+              alert('Please select a time slot before booking.');
+              return false;
+            }
 
-          if (!selectedHour) {
-            alert('Please select a time slot before booking.');
-            return false;
+            if (!phoneVal) {
+              alert('Please enter your phone number before making a booking.');
+              if (phoneInput) phoneInput.focus();
+              return false;
+            }
+
+            if (userBalance < price) {
+              alert('Insufficient balance (Required: ' + price + ' THB / Current Balance: ' + userBalance + ' THB). Please top up before booking.');
+              return false;
+            }
+
+            const timeText = selectedSlotDetails[courtId] || '';
+            const confirmMsg = 'Confirm booking for ' + courtName + '\nTime: ' + timeText + '\nPhone Number: ' + phoneVal + '\nPrice: ' + price + ' THB';
+
+            return confirm(confirmMsg);
           }
-
-          if (!phoneVal) {
-            alert('Please enter your phone number before making a booking.');
-            if (phoneInput) phoneInput.focus();
-            return false;
-          }
-
-          if (userBalance < price) {
-            alert('Insufficient balance (Required: ' + price + ' THB / Current Balance: ' + userBalance + ' THB). Please top up before booking.');
-            return false;
-          }
-
-          const timeText = selectedSlotDetails[courtId] || '';
-          const confirmMsg = 'Confirm booking for ' + courtName + '\nTime: ' + timeText + '\nPhone Number: ' + phoneVal + '\nPrice: ' + price + ' THB';
-
-          return confirm(confirmMsg);
-        }
-      </script>
-    <% end %>
+        </script>
+      <% end %>
+    </div>
   </div>
-</div>
