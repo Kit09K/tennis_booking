@@ -6,39 +6,39 @@ class BookingsController < ApplicationController
       redirect_to root_path, alert: "กรุณาเข้าสู่ระบบก่อน"
       return
     end
-    
+
     @bookings = current_user.bookings.order(start_time: :desc)
   end
 
   def create
     user = current_user
-    
+
     if user.nil?
-      return render json: { status: "error", errors: ["กรุณาเข้าสู่ระบบก่อนทำการจอง"] }, status: :unauthorized
+      return render json: { status: "error", errors: [ "กรุณาเข้าสู่ระบบก่อนทำการจอง" ] }, status: :unauthorized
     end
 
     if user.balance < 500
-      return render json: { status: "error", errors: ["เครดิตไม่เพียงพอ กรุณาเติมเงินขั้นต่ำ 500 บาท"] }, status: :unprocessable_entity
+      return render json: { status: "error", errors: [ "เครดิตไม่เพียงพอ กรุณาเติมเงินขั้นต่ำ 500 บาท" ] }, status: :unprocessable_entity
     end
 
     cord = Cord.find(params[:cord_id])
-    
+
     # Parse date and start_hour
     date = Date.parse(params[:date])
     if date < Date.today
-      return render json: { status: "error", errors: ["ไม่สามารถจองสนามย้อนหลังได้"] }, status: :unprocessable_entity
+      return render json: { status: "error", errors: [ "ไม่สามารถจองสนามย้อนหลังได้" ] }, status: :unprocessable_entity
     end
 
     start_time = Time.zone.local(date.year, date.month, date.day, params[:start_hour].to_i, 0, 0)
     if start_time <= Time.current
-      return render json: { status: "error", errors: ["ไม่สามารถจองช่วงเวลาที่ผ่านไปแล้วได้"] }, status: :unprocessable_entity
+      return render json: { status: "error", errors: [ "ไม่สามารถจองช่วงเวลาที่ผ่านไปแล้วได้" ] }, status: :unprocessable_entity
     end
 
     end_time = start_time + 1.hour
     phone = params[:phone]
 
     if phone.blank?
-      return render json: { status: "error", errors: ["กรุณากรอกเบอร์โทรศัพท์"] }, status: :unprocessable_entity
+      return render json: { status: "error", errors: [ "กรุณากรอกเบอร์โทรศัพท์" ] }, status: :unprocessable_entity
     end
 
     Booking.transaction do
@@ -52,7 +52,7 @@ class BookingsController < ApplicationController
 
       if @booking.save
         # Deduct 500 credits
-        user.topups.create!(amount: -500, status: 'approved')
+        user.topups.create!(amount: -500, status: "approved")
 
         render json: {
           status: "success",
@@ -105,9 +105,9 @@ class BookingsController < ApplicationController
     Booking.transaction do
       # 1. Create Cancle record
       Cancle.create!(booking_id: booking.id)
-      
+
       # 2. Refund credits
-      current_user.topups.create!(amount: refund_amount, status: 'approved')
+      current_user.topups.create!(amount: refund_amount, status: "approved")
     end
 
     redirect_to bookings_path, notice: "ยกเลิกการจองเรียบร้อยแล้ว คุณได้รับเงินคืน #{refund_amount} เครดิต"

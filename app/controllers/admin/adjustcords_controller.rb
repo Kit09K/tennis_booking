@@ -20,10 +20,8 @@ class Admin::AdjustcordsController < ApplicationController
       return redirect_to root_path, alert: "ไม่สามารถบันทึกได้ เนื่องจากวันที่เลือกซ้ำซ้อนกับช่วงเวลาที่ปิดปรับปรุงไปแล้ว"
     end
 
-    # 1. Save adjustcord (maintenance period)
     adjustcord = cord.adjustcords.create!(start_date: start_date, end_date: end_date)
 
-    # 2. Cancel bookings within this period and refund 500
     affected_bookings = cord.bookings.where("start_time >= ? AND start_time <= ?", start_date, end_date)
 
     affected_bookings.each do |booking|
