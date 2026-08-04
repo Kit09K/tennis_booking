@@ -6,10 +6,10 @@
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
       <div>
-        <h1 class="text-2xl font-extrabold text-blue-950 tracking-tight">รายการแจ้งเติมเงินทั้งหมด</h1>
+        <h1 class="text-2xl font-extrabold text-blue-950 tracking-tight">Top-up Requests</h1>
         <p class="text-sm text-slate-500 mt-1">Admin · Top-up Requests</p>
       </div>
-      <%= link_to "← กลับหน้าแรก", root_path,
+      <%= link_to "← Back to Home", root_path,
             class: "rounded-xl bg-white border border-slate-200 text-blue-950 font-medium text-sm px-4 py-2.5 hover:bg-slate-100 transition-colors shadow-sm" %>
     </div>
 
@@ -33,11 +33,11 @@
         <table class="w-full text-left text-sm">
           <thead>
             <tr class="bg-blue-950">
-              <th class="px-5 py-3.5 font-semibold text-blue-200 uppercase tracking-wide text-xs">ผู้ใช้ (User)</th>
-              <th class="px-5 py-3.5 font-semibold text-blue-200 uppercase tracking-wide text-xs">จำนวนเงิน (บาท)</th>
-              <th class="px-5 py-3.5 font-semibold text-blue-200 uppercase tracking-wide text-xs">สถานะ</th>
-              <th class="px-5 py-3.5 font-semibold text-blue-200 uppercase tracking-wide text-xs">เวลา</th>
-              <th class="px-5 py-3.5 font-semibold text-blue-200 uppercase tracking-wide text-xs">การจัดการ</th>
+              <th class="px-5 py-3.5 font-semibold text-blue-200 uppercase tracking-wide text-xs">User</th>
+              <th class="px-5 py-3.5 font-semibold text-blue-200 uppercase tracking-wide text-xs">Amount (THB)</th>
+              <th class="px-5 py-3.5 font-semibold text-blue-200 uppercase tracking-wide text-xs">Status</th>
+              <th class="px-5 py-3.5 font-semibold text-blue-200 uppercase tracking-wide text-xs">Time</th>
+              <th class="px-5 py-3.5 font-semibold text-blue-200 uppercase tracking-wide text-xs">Actions</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100">
@@ -52,15 +52,15 @@
                 <td class="px-5 py-4">
                   <% if topup.status == 'approved' %>
                     <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold px-3 py-1">
-                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> อนุมัติแล้ว
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Approved
                     </span>
                   <% elsif topup.status == 'rejected' %>
                     <span class="inline-flex items-center gap-1.5 rounded-full bg-red-50 text-red-700 text-xs font-semibold px-3 py-1">
-                      <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> ปฏิเสธ
+                      <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Rejected
                     </span>
                   <% else %>
                     <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 text-amber-700 text-xs font-semibold px-3 py-1">
-                      <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> รออนุมัติ
+                      <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Pending
                     </span>
                   <% end %>
                 </td>
@@ -70,10 +70,10 @@
                 <td class="px-5 py-4">
                   <% if topup.status == 'pending' %>
                     <div class="flex gap-2">
-                      <%= button_to "อนุมัติ", admin_topup_path(topup, status: 'approved'), method: :patch,
+                      <%= button_to "Approve", admin_topup_path(topup, status: 'approved'), method: :patch,
                             class: "rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold px-3.5 py-2 transition-colors",
                             data: { turbo: false } %>
-                      <%= button_to "ปฏิเสธ", admin_topup_path(topup, status: 'rejected'), method: :patch,
+                      <%= button_to "Reject", admin_topup_path(topup, status: 'rejected'), method: :patch,
                             class: "rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs font-semibold px-3.5 py-2 transition-colors",
                             data: { turbo: false } %>
                     </div>
@@ -87,7 +87,7 @@
             <% if @topups.empty? %>
               <tr>
                 <td colspan="5" class="px-5 py-10 text-center text-slate-400">
-                  ยังไม่มีรายการแจ้งเติมเงิน
+                  No top-up requests found.
                 </td>
               </tr>
             <% end %>

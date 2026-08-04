@@ -11,7 +11,7 @@
           🎾
         </div>
         <div>
-          <h2 class="text-base font-extrabold text-white tracking-tight leading-tight">ระบบจองสนามเทนนิส</h2>
+          <h2 class="text-base font-extrabold text-white tracking-tight leading-tight">Tennis Court Booking System</h2>
           <p class="text-[11px] text-blue-400 font-medium tracking-wide mt-0.5">Court Reservation</p>
         </div>
       </div>
@@ -37,9 +37,9 @@
             <div class="mt-4 rounded-xl bg-blue-900/40 border border-amber-400/20 px-4 py-3">
               <div class="flex items-center justify-center gap-1.5 mb-1">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5 text-amber-400"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M9 10.5h6M9 13.5h6"/></svg>
-                <p class="text-blue-300 text-xs uppercase tracking-wide font-semibold">เครดิตคงเหลือ</p>
+                <p class="text-blue-300 text-xs uppercase tracking-wide font-semibold">Credit Balance</p>
               </div>
-              <p class="text-amber-400 text-2xl font-extrabold"><%= current_user&.balance || 0 %> <span class="text-sm text-white font-medium">บาท</span></p>
+              <p class="text-amber-400 text-2xl font-extrabold"><%= current_user&.balance || 0 %> <span class="text-sm text-white font-medium">THB</span></p>
             </div>
           <% end %>
         </div>
@@ -50,13 +50,13 @@
                   class: "btn w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 hover:-translate-y-0.5 text-blue-950 font-bold py-2.5 shadow-md shadow-amber-500/20 transition-all",
                   data: { turbo: false } do %>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
-              เติมเงิน (Top-up)
+              Top-up Credit
             <% end %>
             <%= button_to bookings_path, method: :get,
                   class: "btn w-full flex items-center justify-center gap-2 rounded-xl bg-blue-900/60 hover:bg-blue-900 text-white font-medium py-2.5 border border-blue-800 transition-colors mb-2",
                   data: { turbo: false } do %>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
-              ประวัติการจอง (My Bookings)
+              My Bookings
             <% end %>
           <% end %>
 
@@ -65,7 +65,7 @@
                   class: "btn btn-warning w-full flex items-center justify-center gap-2 rounded-xl bg-blue-900/60 hover:bg-blue-900 text-white font-medium py-2.5 border border-blue-800 transition-colors",
                   data: { turbo: false } do %>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>
-              จัดการการเติมเงิน (Admin)
+              Admin Top-ups
             <% end %>
           <% end %>
 
@@ -73,7 +73,7 @@
                 class: "btn btn-danger w-full flex items-center justify-center gap-2 rounded-xl bg-transparent hover:bg-red-500/10 text-blue-300 hover:text-red-300 font-medium py-2.5 border border-blue-900 hover:border-red-500/40 transition-colors",
                 data: { turbo: false } do %>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            ออกจากระบบ (Logout)
+            Logout
           <% end %>
         </div>
 
@@ -83,8 +83,8 @@
           <div class="avatar w-16 h-16 mx-auto mb-3 rounded-full bg-blue-900/60 text-blue-400 flex items-center justify-center border-2 border-dashed border-blue-800">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           </div>
-          <p class="text-white font-medium text-sm mb-1">ผู้เยี่ยมชม</p>
-          <p class="text-blue-300 text-xs">กรุณาเข้าสู่ระบบเพื่อใช้งานเต็มรูปแบบ</p>
+          <p class="text-white font-medium text-sm mb-1">Guest User</p>
+          <p class="text-blue-300 text-xs">Please login to access full features</p>
         </div>
 
         <%= button_to "/auth/keycloak", method: :post,
@@ -119,29 +119,29 @@
       <div class="admin-maintenance-wrapper max-w-4xl mx-auto">
 
         <div class="mb-6">
-          <h1 class="text-2xl font-extrabold text-blue-950 tracking-tight">จัดการปิดปรับปรุงสนามเทนนิส</h1>
+          <h1 class="text-2xl font-extrabold text-blue-950 tracking-tight">Manage Tennis Court Maintenance</h1>
           <p class="text-sm text-slate-500 mt-1">Maintenance Schedule</p>
         </div>
 
         <!-- Form Card -->
         <div class="rounded-2xl bg-white border border-slate-100 shadow-lg shadow-blue-950/5 p-6 mb-8">
-          <h3 class="text-xs font-bold uppercase tracking-widest text-amber-500 mb-4">ตั้งค่าปิดปรับปรุง</h3>
+          <h3 class="text-xs font-bold uppercase tracking-widest text-amber-500 mb-4">Manage Maintenance</h3>
 
           <%= form_with url: admin_adjustcords_path, method: :post, local: true do |f| %>
             <div class="flex flex-col sm:flex-row gap-4 mb-5">
               <div class="flex-1">
-                <label class="block text-sm font-semibold text-blue-950 mb-1.5">ตั้งแต่วันที่</label>
+                <label class="block text-sm font-semibold text-blue-950 mb-1.5">Start Date</label>
                 <input type="date" name="start_date" id="admin_start_date" required min="<%= Date.today.strftime("%Y-%m-%d") %>"
                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-blue-950 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400">
               </div>
               <div class="flex-1">
-                <label class="block text-sm font-semibold text-blue-950 mb-1.5">ถึงวันที่</label>
+                <label class="block text-sm font-semibold text-blue-950 mb-1.5">End Date</label>
                 <input type="date" name="end_date" id="admin_end_date" required min="<%= Date.today.strftime("%Y-%m-%d") %>"
                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-blue-950 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400">
               </div>
             </div>
 
-            <%= submit_tag "บันทึกการปิดปรับปรุง",
+            <%= submit_tag "Save",
                   class: "btn btn-danger rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2.5 transition-colors cursor-pointer",
                   data: { turbo: false } %>
           <% end %>
@@ -173,15 +173,15 @@
         <!-- Table Card -->
         <div class="rounded-2xl bg-white border border-slate-100 shadow-lg shadow-blue-950/5 overflow-hidden">
           <div class="px-6 pt-5">
-            <h3 class="text-xs font-bold uppercase tracking-widest text-amber-500 mb-2">รายการปิดปรับปรุงปัจจุบัน</h3>
+            <h3 class="text-xs font-bold uppercase tracking-widest text-amber-500 mb-2">Current Maintenance Schedule</h3>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm mt-2">
               <thead>
                 <tr class="bg-blue-950">
-                  <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs">เริ่มวันที่</th>
-                  <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs">ถึงวันที่</th>
-                  <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs">จัดการ</th>
+                  <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs">Start Date</th>
+                  <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs">End Date</th>
+                  <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs">Actions</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100">
@@ -190,9 +190,9 @@
                     <td class="px-6 py-4 font-medium text-blue-950"><%= Date.parse(adj[:start_date]).strftime("%d/%m/%Y") %></td>
                     <td class="px-6 py-4 font-medium text-blue-950"><%= Date.parse(adj[:end_date]).strftime("%d/%m/%Y") %></td>
                     <td class="px-6 py-4">
-                      <%= button_to "ยกเลิก", admin_adjustcord_path(adj[:id]), method: :delete,
+                      <%= button_to "Cancel", admin_adjustcord_path(adj[:id]), method: :delete,
                             form: { data: { turbo: false } },
-                            onclick: "return confirm('ต้องการยกเลิกการปิดปรับปรุงใช่หรือไม่?');",
+                            onclick: "return confirm('Are you sure you want to cancel this maintenance schedule?');",
                             class: "btn btn-warning rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs font-semibold px-3.5 py-2 transition-colors" %>
                     </td>
                   </tr>
@@ -200,7 +200,7 @@
 
                 <% if @adjustcords.empty? %>
                   <tr>
-                    <td colspan="3" class="px-6 py-10 text-center text-slate-400">ยังไม่มีการตั้งค่าปิดปรับปรุง</td>
+                    <td colspan="3" class="px-6 py-10 text-center text-slate-400">No maintenance schedules found.</td>
                   </tr>
                 <% end %>
               </tbody>
@@ -271,19 +271,19 @@
                     type="tel"
                     id="phone-<%= cord.id %>"
                     class="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm text-blue-950 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
-                    placeholder="กรอกเบอร์โทรศัพท์"
+                    placeholder="Please enter your phone number"
                     required
                   />
                 </div>
 
                 <div class="booking-field-group mb-5">
-                  <label class="block text-sm font-bold text-blue-950 mb-2">Booking Time Available: 6.00am-24.00pm</label>
+                  <label class="block text-sm font-bold text-blue-950 mb-2">Booking Time Available: 6:00-24:00</label>
                   <div class="slots-container flex flex-wrap gap-2" id="slots-<%= cord.id %>" data-court-id="<%= cord.id %>">
                   </div>
                 </div>
 
                 <div class="price-info-tag text-sm text-slate-700 mb-5">
-                  ราคาการจอง: <span data-testid="price-amount" class="font-semibold text-blue-950">500 baht</span> / ชั่วโมง
+                  Booking Price: <span data-testid="price-amount" class="font-semibold text-blue-950">500 THB</span> / hour
                 </div>
 
                 <div class="card-footer mt-auto flex justify-end">

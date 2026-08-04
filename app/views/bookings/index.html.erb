@@ -11,7 +11,7 @@
           🎾
         </div>
         <div>
-          <h2 class="text-base font-extrabold text-white tracking-tight leading-tight">ระบบจองสนามเทนนิส</h2>
+          <h2 class="text-base font-extrabold text-white tracking-tight leading-tight">Tennis Court Booking</h2>
           <p class="text-[11px] text-blue-400 font-medium tracking-wide mt-0.5">Court Reservation</p>
         </div>
       </div>
@@ -32,9 +32,9 @@
         <div class="mt-4 rounded-xl bg-blue-900/40 border border-amber-400/20 px-4 py-3">
           <div class="flex items-center justify-center gap-1.5 mb-1">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5 text-amber-400"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M9 10.5h6M9 13.5h6"/></svg>
-            <p class="text-blue-300 text-xs uppercase tracking-wide font-semibold">เครดิตคงเหลือ</p>
+            <p class="text-blue-300 text-xs uppercase tracking-wide font-semibold">Credit Balance</p>
           </div>
-          <p class="text-amber-400 text-2xl font-extrabold"><%= current_user.balance || 0 %> <span class="text-sm text-white font-medium">บาท</span></p>
+          <p class="text-amber-400 text-2xl font-extrabold"><%= current_user.balance || 0 %> <span class="text-sm text-white font-medium">THB</span></p>
         </div>
       </div>
 
@@ -45,20 +45,20 @@
               class: "btn w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 hover:-translate-y-0.5 text-blue-950 font-bold py-2.5 shadow-md shadow-amber-500/20 transition-all",
               data: { turbo: false } do %>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
-          เติมเงิน (Top-up)
+          Top-up Credit
         <% end %>
         <%= button_to bookings_path, method: :get,
               class: "btn w-full flex items-center justify-center gap-2 rounded-xl bg-blue-900 text-amber-400 font-bold py-2.5 border-2 border-amber-400/50 shadow-[0_0_15px_rgba(251,191,36,0.15)] transition-colors mb-2",
               data: { turbo: false } do %>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
-          ประวัติการจอง (My Bookings)
+          My Bookings
         <% end %>
 
         <%= button_to logout_path, method: :delete,
               class: "btn btn-danger w-full flex items-center justify-center gap-2 rounded-xl bg-transparent hover:bg-red-500/10 text-blue-300 hover:text-red-300 font-medium py-2.5 border border-blue-900 hover:border-red-500/40 transition-colors mt-auto",
               data: { turbo: false } do %>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          ออกจากระบบ (Logout)
+          Logout
         <% end %>
       </div>
     </div>
@@ -83,26 +83,26 @@
         <div>
           <a href="/" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors mb-4 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="m15 18-6-6 6-6"/></svg>
-            กลับหน้าแรก (Back to Home)
+            Back to Home
           </a>
-          <h1 class="text-3xl font-extrabold text-blue-950 tracking-tight">ประวัติการจองสนาม (My Bookings)</h1>
-          <p class="text-sm text-slate-500 mt-1">รายการจองสนามและประวัติการยกเลิก</p>
+          <h1 class="text-3xl font-extrabold text-blue-950 tracking-tight">My Bookings</h1>
+          <p class="text-sm text-slate-500 mt-1">List of your bookings and cancellation history</p>
         </div>
       </div>
 
       <div class="rounded-2xl bg-white border border-slate-100 shadow-lg shadow-blue-950/5 overflow-hidden">
         <div class="px-6 pt-5 bg-white">
-          <h3 class="text-xs font-bold uppercase tracking-widest text-amber-500 mb-2">ข้อมูลการจองของคุณ</h3>
+          <h3 class="text-xs font-bold uppercase tracking-widest text-amber-500 mb-2">Your Booking Information</h3>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm mt-2">
             <thead>
               <tr class="bg-blue-950">
-                <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs">สนาม</th>
-                <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs">วันที่</th>
-                <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs">เวลา</th>
-                <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs">สถานะ</th>
-                <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs text-right">จัดการ</th>
+                <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs">Court</th>
+                <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs">Date</th>
+                <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs">Time</th>
+                <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs">Status</th>
+                <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs text-right">Actions</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
@@ -118,15 +118,15 @@
                   <td class="px-6 py-4">
                     <% if is_cancelled %>
                       <span class="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-bold bg-red-100 text-red-700">
-                        <span class="w-1.5 h-1.5 rounded-full bg-red-600"></span> ยกเลิกแล้ว
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-600"></span> Cancelled
                       </span>
                     <% elsif is_past %>
                       <span class="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-bold bg-slate-100 text-slate-600">
-                        <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> ผ่านไปแล้ว
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Past Booking
                       </span>
                     <% else %>
                       <span class="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> ใช้งานปกติ
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Upcoming
                       </span>
                     <% end %>
                   </td>
@@ -134,9 +134,9 @@
                     <% if !is_cancelled && !is_past %>
                       <% 
                         time_diff = booking.start_time - Time.current 
-                        cancel_msg = time_diff > 60.minutes ? "คุณจะได้รับเครดิตคืนเต็มจำนวน (500 เครดิต)\nต้องการยกเลิกหรือไม่?" : "คุณยกเลิกกระชั้นชิด (น้อยกว่า 60 นาที) จะได้รับเครดิตคืน 50% (250 เครดิต)\nต้องการยกเลิกหรือไม่?"
+                        cancel_msg = time_diff > 60.minutes ? "You will receive a full credit refund (500 credits)\nDo you want to cancel?" : "You are cancelling close to the booking time (less than 60 minutes) and will receive a 50% credit refund (250 credits)\nDo you want to cancel?"
                       %>
-                      <%= button_to "ยกเลิกการจอง", booking_path(booking), method: :delete,
+                      <%= button_to "Cancel Booking", booking_path(booking), method: :delete,
                             form: { data: { turbo: false }, class: "inline-block" },
                             onclick: "return confirm('#{cancel_msg}');",
                             class: "btn rounded-lg bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs font-semibold px-4 py-2 transition-colors" %>
@@ -152,7 +152,7 @@
                   <td colspan="5" class="px-6 py-12 text-center text-slate-400 bg-slate-50/50">
                     <div class="flex flex-col items-center justify-center">
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 text-slate-300 mb-3"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
-                      <p class="text-sm font-semibold text-slate-500">คุณยังไม่มีประวัติการจองสนาม</p>
+                      <p class="text-sm font-semibold text-slate-500">You have no booking history</p>
                     </div>
                   </td>
                 </tr>
@@ -165,12 +165,12 @@
       <div class="mt-6 bg-blue-50 border border-blue-100 rounded-xl p-5">
         <h4 class="text-sm font-bold text-blue-900 mb-2 flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
-          เงื่อนไขการยกเลิกการจอง
+          Booking Cancellation Policy
         </h4>
         <ul class="text-xs text-blue-800 space-y-1.5 list-disc pl-5">
-          <li>ยกเลิกล่วงหน้า <strong>มากกว่า 60 นาที</strong> ก่อนถึงเวลาจอง: <span class="text-emerald-600 font-bold">รับเครดิตคืนเต็มจำนวน 100% (500 เครดิต)</span></li>
-          <li>ยกเลิกล่วงหน้า <strong>น้อยกว่า 60 นาที</strong> ก่อนถึงเวลาจอง: <span class="text-amber-600 font-bold">รับเครดิตคืน 50% (250 เครดิต)</span></li>
-          <li>ไม่สามารถยกเลิกการจองที่เลยเวลาเริ่มไปแล้วได้</li>
+          <li>Cancel in advance <strong>more than 60 minutes</strong> before the booking time: <span class="text-emerald-600 font-bold">Receive full credit refund 100% (500 credits)</span></li>
+          <li>Cancel in advance <strong>less than 60 minutes</strong> before the booking time: <span class="text-amber-600 font-bold">Receive 50% credit refund (250 credits)</span></li>
+          <li>Cancellations are not allowed for bookings that have already started.</li>
         </ul>
       </div>
 

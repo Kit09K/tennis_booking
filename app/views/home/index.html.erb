@@ -8,7 +8,7 @@
       <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-yellow-500 shadow-lg shadow-amber-500/30 mb-4 text-3xl">
         🎾
       </div>
-      <h1 class="text-3xl font-extrabold text-blue-950 tracking-tight">ระบบจองสนามเทนนิส</h1>
+      <h1 class="text-3xl font-extrabold text-blue-950 tracking-tight">Tennis Court Booking</h1>
       <p class="text-sm text-slate-500 mt-1">Tennis Court Booking System</p>
     </div>
 
@@ -44,15 +44,15 @@
           </p>
         </div>
 
-        <h3 class="text-xs font-bold uppercase tracking-widest text-amber-500 mb-3">ข้อมูลโปรไฟล์ (Profile)</h3>
+        <h3 class="text-xs font-bold uppercase tracking-widest text-amber-500 mb-3">Profile Information</h3>
 
         <ul class="space-y-2 mb-4">
           <li class="flex justify-between items-center rounded-lg bg-slate-50 border border-slate-100 px-4 py-2.5 text-sm">
-            <span class="text-slate-500">ชื่อ</span>
+            <span class="text-slate-500">Name</span>
             <span class="font-medium text-blue-950"><%= session[:userinfo]["name"] %></span>
           </li>
           <li class="flex justify-between items-center rounded-lg bg-slate-50 border border-slate-100 px-4 py-2.5 text-sm">
-            <span class="text-slate-500">อีเมล</span>
+            <span class="text-slate-500">Email</span>
             <span class="font-medium text-blue-950"><%= session[:userinfo]["email"] %></span>
           </li>
         </ul>
@@ -60,9 +60,9 @@
         <!-- Balance Card -->
         <div class="rounded-xl bg-gradient-to-br from-blue-950 to-blue-900 px-5 py-4 mb-6 flex items-center justify-between shadow-md">
           <div>
-            <p class="text-xs text-blue-200 uppercase tracking-wide font-semibold mb-1">เครดิตคงเหลือ</p>
+            <p class="text-xs text-blue-200 uppercase tracking-wide font-semibold mb-1">Credit Balance</p>
             <p class="text-2xl font-extrabold text-amber-400">
-              <%= number_with_delimiter(current_user&.balance || 0) %> <span class="text-sm font-medium text-white">บาท</span>
+              <%= number_with_delimiter(current_user&.balance || 0) %> <span class="text-sm font-medium text-white">THB</span>
             </p>
           </div>
           <div class="w-10 h-10 rounded-full bg-amber-400/20 flex items-center justify-center text-xl">
@@ -70,16 +70,16 @@
           </div>
         </div>
 
-        <%= button_to "ไปหน้าเติมเงิน", new_topup_path, method: :get, data: { turbo: false },
+        <%= button_to "Top Up Credit", new_topup_path, method: :get, data: { turbo: false },
               class: "w-full rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-blue-950 font-bold py-2.5 shadow-md shadow-amber-500/25 transition-all mb-3" %>
 
         <% if session[:is_admin] %>
           <div class="mt-4 pt-4 border-t border-slate-100">
             <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-1.5">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 10-8 0v2"/></svg>
-              ส่วนสำหรับผู้ดูแลระบบ
+              Admin Panel
             </h3>
-            <%= button_to "จัดการการเติมเงิน (Admin)", admin_topups_path, method: :get, data: { turbo: false },
+            <%= button_to "Manage Top-Ups (Admin)", admin_topups_path, method: :get, data: { turbo: false },
                   class: "w-full rounded-xl bg-white border-2 border-blue-950 text-blue-950 font-semibold py-2.5 hover:bg-blue-950 hover:text-white transition-colors" %>
           </div>
         <% end %>
@@ -92,7 +92,7 @@
       <% else %>
 
         <div class="text-center py-4">
-          <p class="text-slate-600 mb-6">กรุณาเข้าสู่ระบบเพื่อใช้งาน</p>
+          <p class="text-slate-600 mb-6">Please login to access your account</p>
           <%= button_to "Login with Keycloak", "/auth/keycloak", method: :post, data: { turbo: false },
                 class: "w-full rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-blue-950 font-bold py-3 shadow-lg shadow-amber-500/30 transition-all" %>
         </div>
