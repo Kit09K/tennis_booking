@@ -265,10 +265,16 @@
                       <% (6..23).each do |hour| %>
                         <% 
                         is_today = (current_court_date == Time.current.in_time_zone.strftime("%Y-%m-%d"))
-                        current_hour = Time.current.in_time_zone.hour
-                        is_past_time = is_today && (hour <= current_hour)
+  current_time = Time.current.in_time_zone
+  
+  # กำหนดเวลาเริ่มต้นและสิ้นสุดของรอบเวลานี้ในวันนั้นๆ
+  slot_start_time = Time.zone.parse("#{current_court_date} #{format('%02d:00', hour)}")
+  slot_end_time = hour == 23 ? Time.zone.parse("#{current_court_date} 24:00") : Time.zone.parse("#{current_court_date} #{format('%02d:00', hour + 1)}")
+  
+  # ซ่อนก็ต่อเมื่อเลยเวลาสิ้นสุดของรอบนั้นไปแล้ว (ในกรณีที่เป็นวันปัจจุบัน)
+  is_past_time = is_today && (current_time >= slot_end_time)
 
-                        next if is_past_time
+  next if is_past_time
 
                         user_booking_this_slot = if current_user.present?
                           current_user.bookings.find do |b|
