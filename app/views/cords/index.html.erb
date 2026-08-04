@@ -202,7 +202,7 @@
               <!-- Court Image -->
               <div class="court-image w-full md:w-[280px] flex-shrink-0 bg-slate-200" aria-label="Tennis court image">
                 <span class="court-image-content block w-full h-full">
-                  <%= image_tag cord.try(:image_url).presence || "Tennis-Court.jpg", alt: cord.name, class: "w-full h-full object-cover aspect-[4/3] md:aspect-auto md:min-h-full" %>
+                  <%= image_tag cord.name == "Court 1" ? "Tennis-Court.jpg" : "court2.png", alt: cord.name, class: "w-full h-full object-cover aspect-[4/3] md:aspect-auto md:min-h-full" %>
                 </span>
               </div>
               <!-- Court Details Form -->
@@ -306,7 +306,7 @@
                         <% elsif user_has_booking_on_this_court %>
                           <div class="flex flex-col items-center justify-center p-2 rounded-xl bg-slate-50 text-slate-300 border border-slate-200 cursor-not-allowed text-center" title="You already have an active booking for this court">
                             <span class="text-xs font-bold"><%= time_start %> - <%= time_end %></span>
-                            <span class="text-[10px] text-slate-400 font-medium mt-0.5">Already booked</span>
+                            <span class="text-[10px] text-slate-400 font-medium mt-0.5">Already booked another court</span>
                           </div>
                         <% else %>
                           <button
