@@ -264,18 +264,18 @@
                     min="<%= Date.today.strftime("%Y-%m-%d") %>"
                   />
                 </div>
-
-                <div class="booking-field-group mb-5">
-                  <label for="phone-<%= cord.id %>" class="block text-sm font-bold text-blue-950 mb-1.5">Phone Number:</label>
-                  <input
-                    type="tel"
-                    id="phone-<%= cord.id %>"
-                    class="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm text-blue-950 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
-                    placeholder="Please enter your phone number"
-                    required
-                  />
-                </div>
-
+                <% if session[:userinfo].present? %>
+                  <div class="booking-field-group mb-5">
+                    <label for="phone-<%= cord.id %>" class="block text-sm font-bold text-blue-950 mb-1.5">Phone Number:</label>
+                    <input
+                      type="tel"
+                      id="phone-<%= cord.id %>"
+                      class="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm text-blue-950 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
+                      placeholder="Please enter your phone number"
+                      required
+                    />
+                  </div>
+                <% end %>
                 <div class="booking-field-group mb-5">
                   <label class="block text-sm font-bold text-blue-950 mb-2">Booking Time Available: 6:00-24:00</label>
                   <div class="slots-container flex flex-wrap gap-2" id="slots-<%= cord.id %>" data-court-id="<%= cord.id %>">
