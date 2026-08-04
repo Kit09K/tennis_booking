@@ -28,7 +28,7 @@
             <div class="avatar relative w-16 h-16 rounded-full bg-amber-400 text-blue-950 flex items-center justify-center text-2xl font-bold ring-4 ring-blue-950 shadow-lg shadow-amber-500/20">
               <%= session[:userinfo]["name"].to_s[0].upcase %>
             </div>
-            <span class="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-400 ring-2 ring-blue-950"></span>
+            <%# <span class="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-400 ring-2 ring-blue-950"></span> %>
           </div>
           <h3 class="text-white font-semibold text-base mb-0.5"><%= session[:userinfo]["name"] %></h3>
           <p class="text-blue-300 text-xs"><%= session[:userinfo]["email"] %></p>
