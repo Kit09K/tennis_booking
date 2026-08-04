@@ -298,7 +298,7 @@
                             end
 
                             time_start = format('%02d:00', hour)
-                            time_end   = format('%02d:00', hour + 1 == 24 ? 0 : hour + 1)
+                            time_end   = hour == 23 ? "24:00" : format('%02d:00', hour + 1)
                           %>
                           <% if user_booking_this_slot.present? %>
                             <div class="flex flex-col items-center justify-center p-2 rounded-xl bg-amber-50 text-amber-900 border border-amber-300 text-center cursor-not-allowed">
