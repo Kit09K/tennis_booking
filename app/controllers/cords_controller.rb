@@ -2,6 +2,7 @@ class CordsController < ApplicationController
   def index
     @cords = Cord.all
     active_bookings = Booking.where.not(id: Cancle.select(:booking_id))
+
     @bookings = active_bookings.map do |b|
       {
         id: b.id,
@@ -13,6 +14,7 @@ class CordsController < ApplicationController
         end_hour: b.end_time.hour == 0 ? 24 : b.end_time.hour
       }
     end
+
     @adjustcords = Adjustcord.all.map do |a|
       {
         id: a.id,
@@ -20,10 +22,15 @@ class CordsController < ApplicationController
         end_date: a.end_date.to_date.to_s
       }
     end
+
+    # ดึงวันที่จาก params (ถ้าไม่มีให้ default เป็นวันนี้)
+    @selected_date = params[:date].present? ? Date.parse(params[:date]) : Date.today
+    @is_closed = temporarily_closed?(@selected_date)
   end
 
-  def temporarily_closed?
-    # @current_time = Time.now
-    
+  private
+
+  def temporarily_closed?(date)
+    Adjustcord.exists?([ "start_date <= ? AND end_date >= ?", date, date ])
   end
 end

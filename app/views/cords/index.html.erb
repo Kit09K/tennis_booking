@@ -1,317 +1,413 @@
 <script src="https://cdn.tailwindcss.com"></script>
-
 <div class="flex min-h-screen bg-slate-50">
-
   <!-- Sidebar -->
-  <div class="sidebar w-[280px] flex-shrink-0 bg-gradient-to-b from-blue-950 to-slate-950 flex flex-col">
-
+  <div class="sidebar w-[280px] flex-shrink-0 bg-gradient-to-b from-blue-950 to-slate-950 flex flex-col sticky top-0 h-screen overflow-y-auto">
     <div class="sidebar-header px-6 py-6 border-b border-blue-900/60">
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-amber-400/10 border border-amber-400/30 text-xl">
           🎾
         </div>
         <div>
-          <h2 class="text-base font-extrabold text-white tracking-tight leading-tight">Tennis Court Booking System</h2>
+          <h2 class="text-base font-extrabold text-white tracking-tight leading-tight">ระบบจองสนามเทนนิส</h2>
           <p class="text-[11px] text-blue-400 font-medium tracking-wide mt-0.5">Court Reservation</p>
         </div>
       </div>
     </div>
-
     <div class="sidebar-content flex-1 flex flex-col px-5 py-6">
-
       <% if session[:userinfo].present? %>
         <% current_user = User.find_by(id: session[:user_id]) %>
-
+        <% user_balance = current_user&.balance || 0 %>
         <div class="user-profile text-center mb-6 pb-6 border-b border-blue-900/60">
           <div class="relative w-16 h-16 mx-auto mb-3">
             <div class="absolute inset-0 rounded-full bg-amber-400/30 blur-lg"></div>
             <div class="avatar relative w-16 h-16 rounded-full bg-amber-400 text-blue-950 flex items-center justify-center text-2xl font-bold ring-4 ring-blue-950 shadow-lg shadow-amber-500/20">
               <%= session[:userinfo]["name"].to_s[0].upcase %>
             </div>
-            <%# <span class="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-400 ring-2 ring-blue-950"></span> %>
+            <span class="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-400 ring-2 ring-blue-950"></span>
           </div>
           <h3 class="text-white font-semibold text-base mb-0.5"><%= session[:userinfo]["name"] %></h3>
           <p class="text-blue-300 text-xs"><%= session[:userinfo]["email"] %></p>
-
           <% unless session[:is_admin] %>
             <div class="mt-4 rounded-xl bg-blue-900/40 border border-amber-400/20 px-4 py-3">
               <div class="flex items-center justify-center gap-1.5 mb-1">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5 text-amber-400"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M9 10.5h6M9 13.5h6"/></svg>
-                <p class="text-blue-300 text-xs uppercase tracking-wide font-semibold">Credit Balance</p>
+                <p class="text-blue-300 text-xs uppercase tracking-wide font-semibold">เครดิตคงเหลือ</p>
               </div>
-              <p class="text-amber-400 text-2xl font-extrabold"><%= current_user&.balance || 0 %> <span class="text-sm text-white font-medium">THB</span></p>
+              <p class="text-amber-400 text-2xl font-extrabold"><%= user_balance %> <span class="text-sm text-white font-medium">บาท</span></p>
             </div>
           <% end %>
         </div>
-
         <div class="flex flex-col gap-2.5">
           <% unless session[:is_admin] %>
-          <%= button_to new_topup_path, method: :get,
+            <%= button_to new_topup_path, method: :get,
                   class: "btn w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 hover:-translate-y-0.5 text-blue-950 font-bold py-2.5 shadow-md shadow-amber-500/20 transition-all",
                   data: { turbo: false } do %>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
-              Top-up Credit
+              เติมเงิน (Top-up)
             <% end %>
             <%= button_to bookings_path, method: :get,
                   class: "btn w-full flex items-center justify-center gap-2 rounded-xl bg-blue-900/60 hover:bg-blue-900 text-white font-medium py-2.5 border border-blue-800 transition-colors mb-2",
                   data: { turbo: false } do %>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
-              My Bookings
+              ประวัติการจอง (My Bookings)
             <% end %>
           <% end %>
-
           <% if session[:is_admin] %>
             <%= button_to admin_topups_path, method: :get,
                   class: "btn btn-warning w-full flex items-center justify-center gap-2 rounded-xl bg-blue-900/60 hover:bg-blue-900 text-white font-medium py-2.5 border border-blue-800 transition-colors",
                   data: { turbo: false } do %>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>
-              Admin Top-ups
+              จัดการการเติมเงิน (Admin)
             <% end %>
           <% end %>
-
           <%= button_to logout_path, method: :delete,
                 class: "btn btn-danger w-full flex items-center justify-center gap-2 rounded-xl bg-transparent hover:bg-red-500/10 text-blue-300 hover:text-red-300 font-medium py-2.5 border border-blue-900 hover:border-red-500/40 transition-colors",
                 data: { turbo: false } do %>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            Logout
+            ออกจากระบบ (Logout)
           <% end %>
         </div>
-
       <% else %>
-
         <div class="user-profile text-center mb-6">
           <div class="avatar w-16 h-16 mx-auto mb-3 rounded-full bg-blue-900/60 text-blue-400 flex items-center justify-center border-2 border-dashed border-blue-800">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           </div>
-          <p class="text-white font-medium text-sm mb-1">Guest User</p>
-          <p class="text-blue-300 text-xs">Please login to access full features</p>
+          <p class="text-white font-medium text-sm mb-1">ผู้เยี่ยมชม</p>
+          <p class="text-blue-300 text-xs">กรุณาเข้าสู่ระบบเพื่อใช้งานเต็มรูปแบบ</p>
         </div>
-
         <%= button_to "/auth/keycloak", method: :post,
               class: "btn w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-blue-950 font-bold py-2.5 shadow-md shadow-amber-500/20 transition-all",
               data: { turbo: false } do %>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
           Login with Keycloak
         <% end %>
-
       <% end %>
-
     </div>
   </div>
-
   <!-- Main Content -->
   <div class="main-content flex-1 bg-slate-50 overflow-y-auto px-6 md:px-10 py-8">
-
     <% if notice.present? %>
       <div class="flash-messages mb-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 text-center shadow-sm">
         <%= notice %>
       </div>
     <% end %>
-
     <% if alert.present? %>
       <div class="flash-messages flash-error mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 text-center shadow-sm">
         <%= alert %>
       </div>
     <% end %>
-
     <% if session[:is_admin] %>
-
+      <!-- Admin Maintenance Section -->
       <div class="admin-maintenance-wrapper max-w-4xl mx-auto">
-
         <div class="mb-6">
-          <h1 class="text-2xl font-extrabold text-blue-950 tracking-tight">Manage Tennis Court Maintenance</h1>
+          <h1 class="text-2xl font-extrabold text-blue-950 tracking-tight">จัดการปิดปรับปรุงสนามเทนนิส</h1>
           <p class="text-sm text-slate-500 mt-1">Maintenance Schedule</p>
         </div>
-
-        <!-- Form Card -->
         <div class="rounded-2xl bg-white border border-slate-100 shadow-lg shadow-blue-950/5 p-6 mb-8">
-          <h3 class="text-xs font-bold uppercase tracking-widest text-amber-500 mb-4">Manage Maintenance</h3>
-
+          <h3 class="text-xs font-bold uppercase tracking-widest text-amber-500 mb-4">ตั้งค่าปิดปรับปรุง</h3>
           <%= form_with url: admin_adjustcords_path, method: :post, local: true do |f| %>
             <div class="flex flex-col sm:flex-row gap-4 mb-5">
               <div class="flex-1">
-                <label class="block text-sm font-semibold text-blue-950 mb-1.5">Start Date</label>
+                <label class="block text-sm font-semibold text-blue-950 mb-1.5">ตั้งแต่วันที่</label>
                 <input type="date" name="start_date" id="admin_start_date" required min="<%= Date.today.strftime("%Y-%m-%d") %>"
                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-blue-950 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400">
               </div>
               <div class="flex-1">
-                <label class="block text-sm font-semibold text-blue-950 mb-1.5">End Date</label>
+                <label class="block text-sm font-semibold text-blue-950 mb-1.5">ถึงวันที่</label>
                 <input type="date" name="end_date" id="admin_end_date" required min="<%= Date.today.strftime("%Y-%m-%d") %>"
                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-blue-950 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400">
               </div>
             </div>
-
-            <%= submit_tag "Save",
+            <%= submit_tag "บันทึกการปิดปรับปรุง",
                   class: "btn btn-danger rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2.5 transition-colors cursor-pointer",
                   data: { turbo: false } %>
           <% end %>
-
-          <script>
-            document.addEventListener("DOMContentLoaded", bindAdminDates);
-            document.addEventListener("turbo:load", bindAdminDates);
-
-            function bindAdminDates() {
-              const startInput = document.getElementById("admin_start_date");
-              const endInput = document.getElementById("admin_end_date");
-              
-              if (startInput && endInput) {
-                startInput.addEventListener("change", function() {
-                  if (this.value) {
-                    endInput.min = this.value;
-                  }
-                });
-                endInput.addEventListener("change", function() {
-                  if (this.value) {
-                    startInput.max = this.value;
-                  }
-                });
-              }
-            }
-          </script>
         </div>
-
-        <!-- Table Card -->
         <div class="rounded-2xl bg-white border border-slate-100 shadow-lg shadow-blue-950/5 overflow-hidden">
           <div class="px-6 pt-5">
-            <h3 class="text-xs font-bold uppercase tracking-widest text-amber-500 mb-2">Current Maintenance Schedule</h3>
+            <h3 class="text-xs font-bold uppercase tracking-widest text-amber-500 mb-2">รายการปิดปรับปรุงปัจจุบัน</h3>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm mt-2">
               <thead>
                 <tr class="bg-blue-950">
-                  <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs">Start Date</th>
-                  <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs">End Date</th>
-                  <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs">Actions</th>
+                  <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs">เริ่มวันที่</th>
+                  <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs">ถึงวันที่</th>
+                  <th class="px-6 py-3 font-semibold text-blue-200 uppercase tracking-wide text-xs">จัดการ</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100">
-                <% @adjustcords.each do |adj| %>
+                <% (@adjustcords || []).each do |adj| %>
                   <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4 font-medium text-blue-950"><%= Date.parse(adj[:start_date]).strftime("%d/%m/%Y") %></td>
-                    <td class="px-6 py-4 font-medium text-blue-950"><%= Date.parse(adj[:end_date]).strftime("%d/%m/%Y") %></td>
+                    <td class="px-6 py-4 font-medium text-blue-950"><%= Date.parse(adj[:start_date]).strftime("%d/%m/%Y") rescue adj[:start_date] %></td>
+                    <td class="px-6 py-4 font-medium text-blue-950"><%= Date.parse(adj[:end_date]).strftime("%d/%m/%Y") rescue adj[:end_date] %></td>
                     <td class="px-6 py-4">
-                      <%= button_to "Cancel", admin_adjustcord_path(adj[:id]), method: :delete,
+                      <%= button_to "ยกเลิก", admin_adjustcord_path(adj[:id]), method: :delete,
                             form: { data: { turbo: false } },
                             onclick: "return confirm('Are you sure you want to cancel this maintenance schedule?');",
                             class: "btn btn-warning rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs font-semibold px-3.5 py-2 transition-colors" %>
                     </td>
                   </tr>
                 <% end %>
-
-                <% if @adjustcords.empty? %>
+                <% if (@adjustcords || []).empty? %>
                   <tr>
-                    <td colspan="3" class="px-6 py-10 text-center text-slate-400">No maintenance schedules found.</td>
+                    <td colspan="3" class="px-6 py-10 text-center text-slate-400">ยังไม่มีการตั้งค่าปิดปรับปรุง</td>
                   </tr>
                 <% end %>
               </tbody>
             </table>
           </div>
         </div>
-
       </div>
-
     <% else %>
-
-      <div class="page-wrapper max-w-5xl mx-auto" data-bookings="<%= (@bookings || []).to_json %>" data-closed-dates="<%= (@adjustcords || []).to_json %>">
-
+      <!-- User / Guest Main View -->
+      <div class="page-wrapper max-w-5xl mx-auto">
         <div class="page-header mb-6">
           <h1 data-testid="court-name" class="text-3xl font-extrabold text-blue-950 tracking-tight">Tennis Court Booking</h1>
+          <% if session[:userinfo].present? %>
+            <p class="text-slate-600 mt-1">Hello!, <span class="font-semibold text-blue-950"><%= current_user&.name %></span></p>
+          <% end %>
         </div>
+        <% 
+          cancelled_booking_ids = defined?(Cancle) ? Cancle.pluck(:booking_id) : []
+          current_user = User.find_by(id: session[:user_id]) if session[:user_id].present?
 
-        <% if session[:userinfo].present? %>
-          <p class="text-slate-600 mb-6">Hello!, <span class="font-semibold text-blue-950"><%= current_user&.name %></span></p>
-        <% end %>
-
-        <!-- <div class="payment-notice mb-8 rounded-xl border-l-4 border-blue-700 bg-blue-50 px-5 py-4">
-          <p class="text-sm text-blue-900">
-            <strong>Please transfer payment to the following account:</strong>
-            KBank, Account Number: 123-4-56789-0 (Account Name: Tennis Club)
-          </p>
-        </div> -->
-
+          user_active_bookings = if current_user.present?
+            current_user.bookings.select do |b|
+              b.end_time > Time.current && !cancelled_booking_ids.include?(b.id)
+            end
+          else
+            []
+          end
+        %>
         <div class="courts-list flex flex-col gap-6">
           <% (@cords || []).each do |cord| %>
-            <div class="court-card flex flex-col md:flex-row rounded-2xl bg-white border border-slate-100 shadow-lg shadow-blue-950/5 overflow-hidden" data-court-id="<%= cord.id %>" data-court-name="<%= cord.name %>">
+            <% 
+              court_price = cord.try(:price) || 500
+              user_active_booking_for_this_court = user_active_bookings.find { |b| b.cord_id == cord.id }
+              user_has_booking_on_this_court = user_active_booking_for_this_court.present?
 
+              current_court_date = params.dig(:court_date, cord.id.to_s) || Date.today.strftime("%Y-%m-%d")
+              
+              is_court_closed_today = (@adjustcords || []).any? do |adj|
+                start_d = Date.parse(adj[:start_date]) rescue nil
+                end_d   = Date.parse(adj[:end_date]) rescue nil
+                selected_d = Date.parse(current_court_date) rescue nil
+
+                selected_d && start_d && end_d && selected_d.between?(start_d, end_d)
+              end
+            %>
+            <div class="court-card flex flex-col md:flex-row rounded-2xl bg-white border border-slate-100 shadow-lg shadow-blue-950/5 overflow-hidden" data-court-id="<%= cord.id %>" data-court-name="<%= cord.name %>">
+              <!-- Court Image -->
               <div class="court-image w-full md:w-[280px] flex-shrink-0 bg-slate-200" aria-label="Tennis court image">
                 <span class="court-image-content block w-full h-full">
                   <%= image_tag cord.try(:image_url).presence || "Tennis-Court.jpg", alt: cord.name, class: "w-full h-full object-cover aspect-[4/3] md:aspect-auto md:min-h-full" %>
                 </span>
               </div>
-
-              <div class="court-details flex-1 flex flex-col p-6">
-
-                <div class="court-status mb-2">
-                  <% if cord.temporarily_closed? %>
+              <!-- Court Details Form -->
+              <%= form_with url: bookings_path, method: :post, local: true, class: "court-details flex-1 flex flex-col p-6", id: "booking-form-#{cord.id}", data: { turbo: false } do |f| %>
+                <%= hidden_field_tag "booking[cord_id]", cord.id %>
+                <%= hidden_field_tag "booking[date]", current_court_date %>
+                <%= hidden_field_tag "booking[start_hour]", "", id: "selected-hour-#{cord.id}" %>
+                <div class="court-status mb-2 flex items-center justify-between">
+                  <% if cord.temporarily_closed? || is_court_closed_today %>
                     <span class="status-closed text-sm font-semibold text-red-600">Temporarily Closed</span>
                   <% else %>
                     <span class="status-available text-sm font-semibold text-emerald-600">Available</span>
                   <% end %>
+                  <% if user_has_booking_on_this_court %>
+                    <% 
+                      booked_date = user_active_booking_for_this_court.start_time.in_time_zone.strftime("%d/%m/%Y")
+                      booked_start_time = user_active_booking_for_this_court.start_time.in_time_zone.strftime("%H:00")
+                      booked_end_time = user_active_booking_for_this_court.end_time.in_time_zone.strftime("%H:00")
+                    %>
+                  <% end %>
                 </div>
-
                 <h2 data-testid="court-name" class="text-2xl font-bold text-blue-950 mb-1"><%= cord.name %></h2>
                 <p data-testid="court-location" class="text-slate-500 mb-1"><%= cord.location %></p>
-                <p data-testid="court-details" class="text-slate-400 text-sm mb-5">Indoor • Hard surface</p>
-
-                <div class="booking-field-group mb-5">
-                  <label for="date-<%= cord.id %>" class="block text-sm font-bold text-blue-950 mb-1.5">Booking Date:</label>
+                <p data-testid="court-details" class="text-slate-400 text-sm mb-4">Indoor • Hard surface</p>
+                <!-- 1. Booking Date (กรอบขนาดสั้น max-w-[200px]) -->
+                <div class="booking-field-group mb-3">
+                  <label for="date-<%= cord.id %>" class="block text-xs font-bold text-blue-950 mb-1">Booking Date:</label>
                   <input
                     type="date"
                     id="date-<%= cord.id %>"
-                    class="court-date-picker w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm text-blue-950 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
-                    data-court-id="<%= cord.id %>"
-                    value="<%= Date.today.strftime("%Y-%m-%d") %>"
+                    name="court_date[<%= cord.id %>]"
+                    value="<%= current_court_date %>"
                     min="<%= Date.today.strftime("%Y-%m-%d") %>"
+                    onchange="window.location.href = '?court_date[<%= cord.id %>]=' + this.value"
+                    class="court-date-picker w-auto max-w-[200px] rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-blue-950 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
                   />
                 </div>
-                <% if session[:userinfo].present? %>
-                  <div class="booking-field-group mb-5">
-                    <label for="phone-<%= cord.id %>" class="block text-sm font-bold text-blue-950 mb-1.5">Phone Number:</label>
-                    <input
-                      type="tel"
-                      id="phone-<%= cord.id %>"
-                      class="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm text-blue-950 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
-                      placeholder="Please enter your phone number"
-                      required
-                    />
+
+                <!-- 2. Phone Number (ขึ้นบรรทัดใหม่ + กรอบขนาดสั้น max-w-[200px]) -->
+                <div class="booking-field-group mb-4">
+                  <label for="phone-<%= cord.id %>" class="block text-xs font-bold text-blue-950 mb-1">Phone Number:</label>
+                  <input
+                    type="tel"
+                    id="phone-<%= cord.id %>"
+                    name="booking[phone]"
+                    placeholder="08X-XXX-XXXX"
+                    value="<%= current_user&.try(:phone) %>"
+                    class="court-phone-input w-auto max-w-[200px] rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-blue-950 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
+                  />
+                </div>
+
+                <% if is_court_closed_today %>
+                  <div class="rounded-xl bg-amber-50 border border-amber-200 p-4 text-center my-2">
+                    <p class="text-xs font-bold text-amber-900">⚠️ Court is temporarily closed on <%= Date.parse(current_court_date).strftime("%d/%m/%Y") rescue current_court_date %></p>
+                  </div>
+                <% else %>
+                  <!-- Time Slots Grid -->
+                  <div class="booking-field-group mb-4">
+                    <label class="block text-xs font-bold text-blue-950 mb-2">Booking Time Available: 06:00 - 24:00</label>
+                    <div class="slots-container grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                      <% (6..23).each do |hour| %>
+                        <% 
+                        is_today = (current_court_date == Time.current.in_time_zone.strftime("%Y-%m-%d"))
+                        current_hour = Time.current.in_time_zone.hour
+                        is_past_time = is_today && (hour <= current_hour)
+
+                        next if is_past_time
+
+                        user_booking_this_slot = if current_user.present?
+                          current_user.bookings.find do |b|
+                            b.cord_id == cord.id && 
+                            b.start_time.in_time_zone.strftime("%Y-%m-%d") == current_court_date && 
+                            b.start_time.in_time_zone.hour == hour &&
+                            b.end_time > Time.current &&
+                            !cancelled_booking_ids.include?(b.id)
+                          end
+                        else
+                          nil
+                        end
+
+                        is_booked = (@bookings || []).any? do |b|
+                          b[:cord_id] == cord.id && 
+                          b[:date] == current_court_date && 
+                          b[:start_hour] == hour &&
+                          !cancelled_booking_ids.include?(b[:id])
+                        end
+
+                        time_start = format('%02d:00', hour)
+                        time_end   = format('%02d:00', hour + 1 == 24 ? 0 : hour + 1)
+                      %>
+                        <% if user_booking_this_slot.present? %>
+                          <div class="flex flex-col items-center justify-center p-2 rounded-xl bg-amber-50 text-amber-900 border border-amber-300 text-center cursor-not-allowed">
+                            <span class="text-xs font-bold"><%= time_start %> - <%= time_end %></span>
+                            <span class="text-[10px] text-amber-700 font-bold mt-0.5">My Booking</span>
+                          </div>
+                        <% elsif is_booked %>
+                          <div class="flex flex-col items-center justify-center p-2 rounded-xl bg-red-100 text-slate-400 border border-red-200 cursor-not-allowed text-center">
+                            <span class="text-xs font-bold"><%= time_start %> - <%= time_end %></span>
+                            <span class="text-[10px] text-red-500 font-medium mt-0.5">Booked</span>
+                          </div>
+                        <% elsif user_has_booking_on_this_court %>
+                          <div class="flex flex-col items-center justify-center p-2 rounded-xl bg-slate-50 text-slate-300 border border-slate-200 cursor-not-allowed text-center" title="You already have an active booking for this court">
+                            <span class="text-xs font-bold"><%= time_start %> - <%= time_end %></span>
+                            <span class="text-[10px] text-slate-400 font-medium mt-0.5">.</span>
+                          </div>
+                        <% else %>
+                          <button
+                          type="button"
+                          onclick="selectTimeSlot('<%= cord.id %>', <%= hour %>, '<%= time_start %> - <%= time_end %>', this)"
+                          class="time-slot-btn-<%= cord.id %> w-full flex flex-col items-center justify-center p-2 rounded-xl bg-blue-50/50 hover:bg-amber-100 text-blue-950 border border-blue-100 transition-all text-center group shadow-sm cursor-pointer"
+                        >
+                            <span class="text-xs font-bold"><%= time_start %> - <%= time_end %></span>
+                            <span class="text-[10px] text-emerald-600 group-hover:text-amber-800 font-medium mt-0.5 slot-status-text">Available</span>
+                          </button>
+                        <% end %>
+                      <% end %>
+                    </div>
                   </div>
                 <% end %>
-                <div class="booking-field-group mb-5">
-                  <label class="block text-sm font-bold text-blue-950 mb-2">Booking Time Available: 6:00-24:00</label>
-                  <div class="slots-container flex flex-wrap gap-2" id="slots-<%= cord.id %>" data-court-id="<%= cord.id %>">
-                  </div>
+                <!-- Booking Price ย้ายมาไว้ใต้กล่องเวลา -->
+                <div class="price-info-tag text-sm text-slate-700 mb-4">
+                  Booking Price: <span data-testid="price-amount" class="font-semibold text-blue-950"><%= court_price %> THB</span> / hour
                 </div>
-
-                <div class="price-info-tag text-sm text-slate-700 mb-5">
-                  Booking Price: <span data-testid="price-amount" class="font-semibold text-blue-950">500 THB</span> / hour
-                </div>
-
-                <div class="card-footer mt-auto flex justify-end">
-                  <% if cord.temporarily_closed? %>
-                    <%= link_to "Temporarily Closed", "#", class: "booking-btn disabled inline-block rounded-xl bg-slate-200 text-slate-400 font-semibold px-6 py-2.5 cursor-not-allowed", disabled: true, "data-testid": "booking-btn" %>
+                <!-- Footer / ปุ่ม Booking -->
+                <div class="card-footer mt-auto flex justify-end pt-2">
+                  <% if cord.temporarily_closed? || is_court_closed_today %>
+                    <%= link_to "Temporarily Closed", "#", class: "booking-btn disabled inline-block rounded-xl bg-slate-200 text-slate-400 font-semibold px-6 py-2.5 cursor-not-allowed", disabled: true %>
                   <% elsif session[:userinfo].blank? %>
                     <%= button_to "Login to Book", "/auth/keycloak", method: :post,
-                          class: "booking-btn rounded-xl bg-blue-950 hover:bg-blue-900 text-white font-semibold px-6 py-2.5 transition-colors",
-                          data: { turbo: false } %>
+                        class: "booking-btn rounded-xl bg-blue-950 hover:bg-blue-900 text-white font-semibold px-6 py-2.5 transition-colors",
+                        data: { turbo: false } %>
                   <% else %>
+                    <% current_user_balance = current_user&.balance || 0 %>
                     <button
-                      type="button"
-                      class="booking-btn rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-blue-950 font-bold px-6 py-2.5 shadow-md shadow-amber-500/20 transition-all"
-                      data-testid="booking-btn"
-                      data-court-id="<%= cord.id %>"
-                      data-court-name="<%= cord.name %>"
-                    >
+                    type="submit"
+                    onclick="return validateBookingForm('<%= cord.id %>', '<%= cord.name %>', <%= court_price %>, <%= current_user_balance %>);"
+                    class="booking-btn rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-blue-950 font-bold px-8 py-3 shadow-md shadow-amber-500/20 transition-all cursor-pointer flex items-center gap-2"
+                  >
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M12 14v4"/><path d="M10 16h4"/></svg>
                       Booking
                     </button>
                   <% end %>
                 </div>
-
-              </div>
+              <% end %>
             </div>
           <% end %>
         </div>
-
       </div>
+      <!-- JavaScript สำหรับจัดการการเลือกรอบเวลาและการตรวจสอบข้อมูล -->
+      <script>
+        const selectedSlotDetails = {};
+
+        function selectTimeSlot(courtId, hour, timeText, btn) {
+          // เคลียร์ปุ่มไฮไลต์เดิมในสนามเดียวกัน
+          const buttons = document.querySelectorAll('.time-slot-btn-' + courtId);
+          buttons.forEach(b => {
+            b.classList.remove('bg-amber-400', 'border-amber-500', 'ring-2', 'ring-amber-400', 'text-blue-950');
+            b.classList.add('bg-blue-50/50', 'border-blue-100', 'text-blue-950');
+            const statusText = b.querySelector('.slot-status-text');
+            if (statusText) {
+              statusText.innerText = 'Available';
+              statusText.className = 'text-[10px] text-emerald-600 group-hover:text-amber-800 font-medium mt-0.5 slot-status-text';
+            }
+          });
+
+          // ใส่ไฮไลต์ให้ปุ่มที่ถูกเลือก
+          btn.classList.remove('bg-blue-50/50', 'border-blue-100');
+          btn.classList.add('bg-amber-400', 'border-amber-500', 'ring-2', 'ring-amber-400', 'text-blue-950');
+          const statusText = btn.querySelector('.slot-status-text');
+          if (statusText) {
+            statusText.innerText = 'Selected';
+            statusText.className = 'text-[10px] text-blue-950 font-bold mt-0.5 slot-status-text';
+          }
+
+          // บันทึกค่าลง hidden field
+          document.getElementById('selected-hour-' + courtId).value = hour;
+          selectedSlotDetails[courtId] = timeText;
+        }
+
+        function validateBookingForm(courtId, courtName, price, userBalance) {
+          const selectedHour = document.getElementById('selected-hour-' + courtId).value;
+          const phoneInput = document.getElementById('phone-' + courtId);
+          const phoneVal = phoneInput ? phoneInput.value.trim() : '';
+
+          if (!selectedHour) {
+            alert('Please select a time slot before booking.');
+            return false;
+          }
+
+          if (!phoneVal) {
+            alert('Please enter your phone number before making a booking.');
+            if (phoneInput) phoneInput.focus();
+            return false;
+          }
+
+          if (userBalance < price) {
+            alert('Insufficient balance (Required: ' + price + ' THB / Current Balance: ' + userBalance + ' THB). Please top up before booking.');
+            return false;
+          }
+
+          const timeText = selectedSlotDetails[courtId] || '';
+          const confirmMsg = 'Confirm booking for ' + courtName + '\nTime: ' + timeText + '\nPhone Number: ' + phoneVal + '\nPrice: ' + price + ' THB';
+
+          return confirm(confirmMsg);
+        }
+      </script>
     <% end %>
   </div>
 </div>
